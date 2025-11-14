@@ -6,6 +6,7 @@ import { UserModule } from './app/users/user.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerInterceptor } from './config/interceptors/logger.interceptor';
 import { AppExceptionFilter } from './config/filters/exception.filter';
+import { CompanyModule } from './app/companies/company.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { AppExceptionFilter } from './config/filters/exception.filter';
       inject: [ConfigService],
       useFactory: typeOrmConfig,
     }),
-    UserModule
+    UserModule,
+    CompanyModule
   ],
   controllers: [],
   providers: [
