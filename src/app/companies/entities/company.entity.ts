@@ -1,12 +1,12 @@
 import { User } from "src/app/users/entities/user.entity";
 import { BaseModel } from "src/config/database/base-model";
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import { CompanyIndustryEnum } from "../enums/company-industry.enum";
 
 
 @Entity()
 export class Company extends BaseModel {
-  @Column()
+  @Column({ unique: true })
   name: string
 
   @Column({ type: 'enum', enum: CompanyIndustryEnum })
@@ -27,4 +27,10 @@ export class Company extends BaseModel {
   @OneToMany(() => User, (user) => user.company)
   users: User[]
 
+  @OneToOne(() => User, (user) => user.ownedCompany, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'managerId' })
+  manager: User
+
+  @Column()
+  managerId: string
 }

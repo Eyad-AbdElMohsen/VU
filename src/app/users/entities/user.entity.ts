@@ -1,5 +1,5 @@
 import { BaseModel } from "src/config/database/base-model";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
 import { UserTypeEnum } from "../enums/user.enum";
 import { Company } from "src/app/companies/entities/company.entity";
 
@@ -18,6 +18,19 @@ export class User extends BaseModel {
   @Column()
   lastName: string
 
+  @Column()
+  phone: string
+
+  // should be in staff data
+  // @Column({ default: false })
+  // approvedByManager: boolean
+
+  @Column({ default: false })
+  verified: boolean
+
+  @Column({ nullable: true })
+  profilePictureUrl: string
+
   @Column({ type: 'enum', enum: UserTypeEnum, default: UserTypeEnum.USER })
   userType: UserTypeEnum
 
@@ -25,11 +38,14 @@ export class User extends BaseModel {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  @ManyToOne(() => Company, (company) => company.users, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => Company, (company) => company.users, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
   @Column({ nullable: true })
   companyId: string
+
+  @OneToOne(() => Company, (company) => company.manager, { nullable: true })
+  ownedCompany: Company
 }
 

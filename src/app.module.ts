@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Session } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/database/typeorm.config';
@@ -7,6 +7,11 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerInterceptor } from './config/interceptors/logger.interceptor';
 import { AppExceptionFilter } from './config/filters/exception.filter';
 import { CompanyModule } from './app/companies/company.module';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
+import { HelperModule } from './app/helper/helper.module';
+import { AuthModule } from './app/auth/auth.module';
+import { SessionModule } from './app/session/session.module';
 
 @Module({
   imports: [
@@ -17,9 +22,18 @@ import { CompanyModule } from './app/companies/company.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: typeOrmConfig,
+      async dataSourceFactory(options) {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
+    HelperModule,
     UserModule,
-    CompanyModule
+    CompanyModule,
+    AuthModule,
+    SessionModule
   ],
   controllers: [],
   providers: [
