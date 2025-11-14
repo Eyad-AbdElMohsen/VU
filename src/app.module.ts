@@ -3,6 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/database/typeorm.config';
 import { UserModule } from './app/users/user.module';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggerInterceptor } from './config/interceptors/logger.interceptor';
+import { AppExceptionFilter } from './config/filters/exception.filter';
 
 @Module({
   imports: [
@@ -17,6 +20,15 @@ import { UserModule } from './app/users/user.module';
     UserModule
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggerInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AppExceptionFilter
+    }
+  ],
 })
 export class AppModule { }
