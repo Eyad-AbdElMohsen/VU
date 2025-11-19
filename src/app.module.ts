@@ -33,7 +33,7 @@ import { SessionModule } from './app/session/session.module';
     UserModule,
     CompanyModule,
     AuthModule,
-    SessionModule
+    SessionModule,
   ],
   controllers: [],
   providers: [
@@ -43,8 +43,8 @@ import { SessionModule } from './app/session/session.module';
     },
     {
       provide: APP_FILTER,
-      useClass: AppExceptionFilter
-    }
+      useClass: AppExceptionFilter,
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}

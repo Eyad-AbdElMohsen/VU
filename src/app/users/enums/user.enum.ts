@@ -2,5 +2,5 @@ export enum UserTypeEnum {
   COMPANY_MANAGER = 'COMPANY_MANAGER',
   COMPANY_EMPLOYEE = 'COMPANY_STAFF',
   ADMIN = 'ADMIN',
-  USER = 'USER'
+  USER = 'USER',
 }

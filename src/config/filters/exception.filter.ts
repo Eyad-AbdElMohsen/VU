@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ValidationError } from 'class-validator';
-import { ErrorResponse } from '../types/error-response.type'
+import { ErrorResponse } from '../types/error-response.type';
 
 @Catch()
 export class AppExceptionFilter implements ExceptionFilter {
@@ -33,9 +33,7 @@ export class AppExceptionFilter implements ExceptionFilter {
         message = (exceptionResponse as any).message || message;
         errorName = (exceptionResponse as any).error || exception.name;
       }
-    }
-
-    else if (exception instanceof ValidationError) {
+    } else if (exception instanceof ValidationError) {
       status = HttpStatus.BAD_REQUEST;
       message = this.formatValidationErrors([exception]);
       errorName = 'ValidationError';
@@ -50,14 +48,11 @@ export class AppExceptionFilter implements ExceptionFilter {
       status = HttpStatus.BAD_REQUEST;
       message = this.formatValidationErrors(exception as ValidationError[]);
       errorName = 'ValidationError';
-    }
-
-    else if (exception instanceof Error) {
+    } else if (exception instanceof Error) {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = exception.message || message;
       errorName = exception.name;
     }
-
 
     const errorResponse: ErrorResponse = {
       statusCode: status,
@@ -65,7 +60,7 @@ export class AppExceptionFilter implements ExceptionFilter {
       path: request.url,
       method: request.method,
       message,
-      error: errorName
+      error: errorName,
     };
 
     if (status >= 500 || process.env.NODE_ENV === 'development') {
@@ -74,7 +69,9 @@ export class AppExceptionFilter implements ExceptionFilter {
         exception instanceof Error ? exception.stack : '',
       );
     } else {
-      this.logger.warn(`${request.method} ${request.url} - ${status} - ${message}`);
+      this.logger.warn(
+        `${request.method} ${request.url} - ${status} - ${message}`,
+      );
     }
 
     response.status(status).json(errorResponse);
@@ -82,7 +79,9 @@ export class AppExceptionFilter implements ExceptionFilter {
 
   private formatValidationErrors(errors: ValidationError[]): string[] {
     return errors.flatMap((err) =>
-      err.constraints ? Object.values(err.constraints) : [`Invalid value for ${err.property}`],
+      err.constraints
+        ? Object.values(err.constraints)
+        : [`Invalid value for ${err.property}`],
     );
   }
 }

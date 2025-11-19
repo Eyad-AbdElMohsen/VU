@@ -1,36 +1,35 @@
-import { User } from "src/app/users/entities/user.entity";
-import { BaseModel } from "src/config/database/base-model";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
-import { CompanyIndustryEnum } from "../enums/company-industry.enum";
-
+import { User } from 'src/app/users/entities/user.entity';
+import { BaseModel } from 'src/config/database/base-model';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { CompanyIndustryEnum } from '../enums/company-industry.enum';
 
 @Entity()
 export class Company extends BaseModel {
   @Column({ unique: true })
-  name: string
+  name: string;
 
   @Column({ type: 'enum', enum: CompanyIndustryEnum })
-  industry: CompanyIndustryEnum
+  industry: CompanyIndustryEnum;
 
   @Column({ nullable: true })
-  website: string
+  website: string;
 
   @Column({ nullable: true })
-  logoUrl: string
+  logoUrl: string;
 
   @Column({ nullable: true })
-  phone: string
+  phone: string;
 
   @Column({ type: 'boolean', default: true })
-  isActive: boolean
+  isActive: boolean;
 
   @OneToMany(() => User, (user) => user.company)
-  users: User[]
+  users: User[];
 
   @OneToOne(() => User, (user) => user.ownedCompany, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'managerId' })
-  manager: User
+  manager: User;
 
   @Column()
-  managerId: string
+  managerId: string;
 }

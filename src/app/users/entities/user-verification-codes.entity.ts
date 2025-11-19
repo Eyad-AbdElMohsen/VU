@@ -16,11 +16,11 @@ export class UserVerificationCode extends BaseModel {
   user: User;
 
   @Column()
-  userId: string
+  userId: string;
 
   @Column({
     type: 'enum',
-    enum: UserVerificationCodeUseCaseEnum
+    enum: UserVerificationCodeUseCaseEnum,
   })
-  useCase: UserVerificationCodeUseCaseEnum
+  useCase: UserVerificationCodeUseCaseEnum;
 }

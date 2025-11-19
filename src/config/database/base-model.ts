@@ -1,5 +1,9 @@
-import { BaseEntity, CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export abstract class BaseModel {
   @PrimaryGeneratedColumn('uuid')
@@ -11,6 +15,10 @@ export abstract class BaseModel {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp without time zone' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp without time zone', nullable: true })
+  @DeleteDateColumn({
+    name: 'deleted_at',
+    type: 'timestamp without time zone',
+    nullable: true,
+  })
   deletedAt?: Date | null;
 }

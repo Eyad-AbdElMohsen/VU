@@ -1,51 +1,51 @@
-import { BaseModel } from "src/config/database/base-model";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
-import { UserTypeEnum } from "../enums/user.enum";
-import { Company } from "src/app/companies/entities/company.entity";
-
+import { BaseModel } from 'src/config/database/base-model';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { UserTypeEnum } from '../enums/user.enum';
+import { Company } from 'src/app/companies/entities/company.entity';
 
 @Entity()
 export class User extends BaseModel {
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column()
   password: string;
 
   @Column()
-  firstName: string
+  firstName: string;
 
   @Column()
-  lastName: string
+  lastName: string;
 
   @Column()
-  phone: string
+  phone: string;
 
   // should be in staff data
   // @Column({ default: false })
   // approvedByManager: boolean
 
   @Column({ default: false })
-  verified: boolean
+  verified: boolean;
 
   @Column({ nullable: true })
-  profilePictureUrl: string
+  profilePictureUrl: string;
 
   @Column({ type: 'enum', enum: UserTypeEnum, default: UserTypeEnum.USER })
-  userType: UserTypeEnum
+  userType: UserTypeEnum;
 
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  @ManyToOne(() => Company, (company) => company.users, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Company, (company) => company.users, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
   @Column({ nullable: true })
-  companyId: string
+  companyId: string;
 
   @OneToOne(() => Company, (company) => company.manager, { nullable: true })
-  ownedCompany: Company
+  ownedCompany: Company;
 }
-

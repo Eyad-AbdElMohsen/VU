@@ -1,7 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { initializeTransactionalContext, StorageDriver } from 'typeorm-transactional';
+import {
+  initializeTransactionalContext,
+  StorageDriver,
+} from 'typeorm-transactional';
 
 async function bootstrap() {
   initializeTransactionalContext({ storageDriver: StorageDriver.AUTO });
@@ -17,6 +20,5 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
   console.log(`Server running on http://localhost:${process.env.PORT ?? 3000}`);
-
 }
 bootstrap();
