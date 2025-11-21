@@ -11,9 +11,9 @@ import { UserVerificationCodeUseCaseEnum } from 'src/app/users/enums/user-verifi
 import { UserTypeEnum } from 'src/app/users/enums/user.enum';
 import { SessionService } from 'src/app/session/services/session.service';
 import { Response } from 'express';
-import { STATUS_CODES } from 'http';
 import { RequestVerificationCodeInput } from '../inputs/request-verification-code.input';
 import { MailService } from 'src/app/mail/services/mail.service';
+import { VerifyEmailVerificationCodeInput } from '../inputs/verify-code.input';
 
 @Injectable()
 export class AuthService {
@@ -64,10 +64,6 @@ export class AuthService {
     await this.companyService.createNewCompany(companyInput, newUser.id);
 
     return newUser;
-    // const session = await this.sessionService.createNewSession(newUser.id)
-    // const token = this.helper.generateJwtToken(session.id)
-
-    // return this.helper.appendAuthTokenToUser(newUser, token, res)
   }
 
   async requestVerificationCode(input: RequestVerificationCodeInput) {
@@ -98,17 +94,44 @@ export class AuthService {
         UserVerificationCodeUseCaseEnum.EMAIL_VERIFICATION,
       );
 
-    if (!verificationCode) {
-      throw new HttpException(
-        'No Verification Code Found, Please Request a New One',
-        StatusCodeEnum.NOT_FOUND,
-      );
-    }
-
     await this.mailService.sendMail(
       user.email,
       `VU Account Verification Code`,
       `Your Request VerificationCode for VU Account is ${verificationCode.code}`,
     );
+  }
+
+  async verifyEmailVerificationCode(
+    input: VerifyEmailVerificationCodeInput,
+    res: Response,
+  ) {
+    const { email, code } = input;
+
+    const user = await this.userRepo.findOne({ where: { email } });
+    if (!user) {
+      throw new HttpException('User Not Found', StatusCodeEnum.NOT_FOUND);
+    }
+
+    if (user.verified) {
+      throw new HttpException(
+        'User Already Verified',
+        StatusCodeEnum.ALREADY_VERIFIED,
+      );
+    }
+
+    await this.userVerificationCodeService.verifyVerificationCode(
+      user.id,
+      code,
+      UserVerificationCodeUseCaseEnum.EMAIL_VERIFICATION,
+    );
+
+    await this.userRepo.update(user.id, {
+      verified: true,
+    });
+
+    const session = await this.sessionService.createNewSession(user.id);
+    const token = this.helper.generateJwtToken(session.id);
+
+    return this.helper.appendAuthTokenToUser(user, token, res);
   }
 }

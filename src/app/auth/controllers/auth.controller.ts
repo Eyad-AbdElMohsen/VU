@@ -5,6 +5,7 @@ import { RegisterManagerInput } from '../inputs/register-manager.input';
 import { Response } from 'express';
 import { RequestVerificationCodeInput } from '../inputs/request-verification-code.input';
 import { User } from 'src/app/users/entities/user.entity';
+import { VerifyEmailVerificationCodeInput } from '../inputs/verify-code.input';
 
 @Controller('auth')
 export class AuthController {
@@ -27,7 +28,10 @@ export class AuthController {
   }
 
   @Post('verify_email')
-  async verifyEmail() {
-    //TODO: implement
+  async verifyEmail(
+    @Body('input') input: VerifyEmailVerificationCodeInput,
+    @Res() res: Response,
+  ) {
+    return await this.authService.verifyEmailVerificationCode(input, res);
   }
 }
