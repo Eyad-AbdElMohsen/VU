@@ -12,6 +12,8 @@ import { DataSource } from 'typeorm';
 import { HelperModule } from './app/helper/helper.module';
 import { AuthModule } from './app/auth/auth.module';
 import { SessionModule } from './app/session/session.module';
+import { FileModule } from './app/file/file.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -29,11 +31,13 @@ import { SessionModule } from './app/session/session.module';
         return addTransactionalDataSource(new DataSource(options));
       },
     }),
+    ScheduleModule.forRoot(),
     HelperModule,
     UserModule,
     CompanyModule,
     AuthModule,
     SessionModule,
+    FileModule
   ],
   controllers: [],
   providers: [
@@ -47,4 +51,4 @@ import { SessionModule } from './app/session/session.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

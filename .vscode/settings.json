@@ -1,5 +1,7 @@
 {
   "cSpell.words": [
     "Userverfication"
-  ]
+  ],
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.tabCompletion": "on"
 }
