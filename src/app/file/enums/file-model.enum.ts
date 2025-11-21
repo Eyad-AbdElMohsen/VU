@@ -1,4 +1,4 @@
 export enum FileModelNameEnum {
-    USER = 'user',
-    COMPANY = 'company',
+  USER = 'user',
+  COMPANY = 'company',
 }

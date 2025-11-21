@@ -37,7 +37,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     CompanyModule,
     AuthModule,
     SessionModule,
-    FileModule
+    FileModule,
   ],
   controllers: [],
   providers: [
@@ -51,4 +51,4 @@ import { ScheduleModule } from '@nestjs/schedule';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}
