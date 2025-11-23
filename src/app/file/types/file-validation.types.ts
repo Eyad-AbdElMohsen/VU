@@ -1,16 +1,24 @@
 import { FileModelNameEnum } from '../enums/file-model.enum';
 
-export const FileSizeRules = {
-  [FileModelNameEnum.USER]: 5 * 1024 * 1024,
-  [FileModelNameEnum.COMPANY]: 10 * 1024 * 1024,
+export type FileModelValidationType = {
+  [K in FileModelNameEnum]: {
+    maxSize: number;
+    allowMimeTypes: string[];
+  };
 };
 
-export const AllowedMimeTypes = {
-  [FileModelNameEnum.USER]: ['image/jpeg', 'image/png', 'image/webp'],
-  [FileModelNameEnum.COMPANY]: [
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'application/pdf',
-  ],
+export const FileModelValidation: FileModelValidationType = {
+  user: {
+    maxSize: 5 * 1024 * 1024,
+    allowMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+  },
+  company: {
+    maxSize: 10 * 1024 * 1024,
+    allowMimeTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'application/pdf',
+    ],
+  },
 };

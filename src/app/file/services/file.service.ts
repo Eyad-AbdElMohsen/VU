@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FileModelNameEnum } from '../enums/file-model.enum';
@@ -14,9 +14,8 @@ export class FileService {
   ) {}
 
   async uploadFile(file: Express.Multer.File, modelName: FileModelNameEnum) {
-    const extension = file.originalname.split('.').pop();
-    const fileName = file.originalname.replace(`.${extension}`, '');
-    const finalName = `${fileName}-${Date.now()}.${extension}`;
+    const finalName = `${Date.now()}-${file.originalname}`;
+
     const savePath = join(process.cwd(), 'public', modelName);
     await fs.promises.mkdir(savePath, { recursive: true });
 
