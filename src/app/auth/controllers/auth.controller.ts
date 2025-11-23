@@ -15,11 +15,11 @@ export class AuthController {
   @Post('register_manager')
   async registerAsCompanyManager(
     @Body('input') input: RegisterManagerInput,
-    @Res() res: Response,
   ): Promise<User> {
-    return await this.authService.registerCompanyManager(input, res);
+    return await this.authService.registerCompanyManager(input);
   }
 
+  @Transactional()
   @Post('code_verify_request')
   async requestVerificationCode(
     @Body('input') input: RequestVerificationCodeInput,
@@ -27,6 +27,7 @@ export class AuthController {
     return await this.authService.requestVerificationCode(input);
   }
 
+  @Transactional()
   @Post('verify_email')
   async verifyEmail(
     @Body('input') input: VerifyEmailVerificationCodeInput,

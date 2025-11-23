@@ -19,7 +19,7 @@ export class HelperService {
       .slice(0, length);
   }
 
-  generateJwtToken(sessionId: number) {
+  async generateJwtToken(sessionId: number) {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
       throw new HttpException(
@@ -29,7 +29,7 @@ export class HelperService {
     }
     const expiresIn = '1d';
 
-    return jwt.sign({ sessionId }, secret, { expiresIn });
+    return await jwt.sign({ sessionId }, secret, { expiresIn });
   }
 
   appendAuthTokenToUser(user: User, token: string, res: Response) {

@@ -26,7 +26,7 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  async registerCompanyManager(input: RegisterManagerInput, res: Response) {
+  async registerCompanyManager(input: RegisterManagerInput) {
     const { companyInput, userInput } = input;
 
     const isUserExist = await this.userRepo.findOne({
@@ -130,7 +130,7 @@ export class AuthService {
     });
 
     const session = await this.sessionService.createNewSession(user.id);
-    const token = this.helper.generateJwtToken(session.id);
+    const token = await this.helper.generateJwtToken(session.id);
 
     return this.helper.appendAuthTokenToUser(user, token, res);
   }
