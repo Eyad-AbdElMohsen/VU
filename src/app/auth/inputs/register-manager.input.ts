@@ -9,6 +9,7 @@ import {
   IsUrl,
   Length,
   Matches,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import { CompanyIndustryEnum } from 'src/app/companies/enums/company-industry.enum';
@@ -52,6 +53,8 @@ export class RegisterUserInput {
   @IsOptional()
   @IsString()
   profilePictureUrl?: string;
+
+  // jobId, department
 }
 
 export class CreateCompanyInput {
@@ -74,6 +77,11 @@ export class CreateCompanyInput {
   @IsOptional()
   @IsString()
   logoUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  description?: string;
 }
 
 export class RegisterManagerInput {

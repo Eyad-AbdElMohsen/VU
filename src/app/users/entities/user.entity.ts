@@ -20,6 +20,9 @@ export class User extends BaseModel {
   @Column()
   phone: string;
 
+  @Column({ nullable: true })
+  jobTitle: string;
+
   // should be in staff data
   // @Column({ default: false })
   // approvedByManager: boolean

@@ -14,6 +14,9 @@ export class Company extends BaseModel {
   @Column({ nullable: true })
   website: string;
 
+  @Column({ type: 'text' })
+  description: string;
+
   @Column({ nullable: true })
   logoUrl: string;
 

@@ -14,6 +14,7 @@ import { Response } from 'express';
 import { RequestVerificationCodeInput } from '../inputs/request-verification-code.input';
 import { MailService } from 'src/app/mail/services/mail.service';
 import { VerifyEmailVerificationCodeInput } from '../inputs/verify-code.input';
+import { LoginInput } from '../inputs/login.input';
 
 @Injectable()
 export class AuthService {
@@ -128,6 +129,29 @@ export class AuthService {
     await this.userRepo.update(user.id, {
       verified: true,
     });
+
+    const session = await this.sessionService.createNewSession(user.id);
+    const token = await this.helper.generateJwtToken(session.id);
+
+    return this.helper.appendAuthTokenToUser(user, token, res);
+  }
+
+  async login(input: LoginInput, res: Response) {
+    const user = await this.userRepo.findOne({
+      where: {
+        email: input.email,
+      },
+    });
+
+    if (
+      !user ||
+      user.password !== (await this.helper.hashPassword(input.password))
+    ) {
+      throw new HttpException(
+        'Bad Credentials',
+        StatusCodeEnum.BAD_CREDENTIALS,
+      );
+    }
 
     const session = await this.sessionService.createNewSession(user.id);
     const token = await this.helper.generateJwtToken(session.id);
