@@ -147,7 +147,7 @@ export class AuthService {
       );
     }
 
-    const correctPassword = this.helper.comparePassword(
+    const correctPassword = await this.helper.comparePassword(
       input.password,
       user.password,
     );

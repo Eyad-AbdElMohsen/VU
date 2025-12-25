@@ -3,7 +3,6 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
 import { User } from '../users/entities/user.entity';
-import { Response } from 'express';
 
 @Injectable()
 export class HelperService {
