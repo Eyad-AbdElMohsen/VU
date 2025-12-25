@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { Transactional } from 'typeorm-transactional';
 import { RegisterManagerInput } from '../inputs/register-manager.input';
@@ -30,16 +30,13 @@ export class AuthController {
 
   @Transactional()
   @Post('verify_email')
-  async verifyEmail(
-    @Body('input') input: VerifyEmailVerificationCodeInput,
-    @Res() res: Response,
-  ) {
-    return await this.authService.verifyEmailVerificationCode(input, res);
+  async verifyEmail(@Body('input') input: VerifyEmailVerificationCodeInput) {
+    return await this.authService.verifyEmailVerificationCode(input);
   }
 
   @Transactional()
   @Post('login')
-  async login(@Body('input') input: LoginInput, @Res() res: Response) {
-    return await this.authService.login(input, res);
+  async login(@Body('input') input: LoginInput) {
+    return await this.authService.login(input);
   }
 }

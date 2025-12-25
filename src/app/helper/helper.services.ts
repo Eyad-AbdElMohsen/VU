@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
 import { User } from '../users/entities/user.entity';
 import { Response } from 'express';
@@ -11,6 +11,10 @@ export class HelperService {
 
   async hashPassword(password: string) {
     return await bcrypt.hash(password, 10);
+  }
+
+  async comparePassword(inputPassword: string, userPassword: string) {
+    return await bcrypt.compare(inputPassword, userPassword);
   }
 
   createRandomCodeNumber(length: number) {
@@ -29,14 +33,13 @@ export class HelperService {
     }
     const expiresIn = '1d';
 
-    return await jwt.sign({ sessionId }, secret, { expiresIn });
+    return jwt.sign({ sessionId }, secret, { expiresIn });
   }
 
-  appendAuthTokenToUser(user: User, token: string, res: Response) {
-    res.setHeader('token', token);
-
-    return Object.assign(user, {
+  appendAuthTokenToUser(user: User, token: string) {
+    return {
+      ...user,
       token,
-    });
+    };
   }
 }

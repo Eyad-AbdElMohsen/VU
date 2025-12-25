@@ -95,17 +95,14 @@ export class AuthService {
         UserVerificationCodeUseCaseEnum.EMAIL_VERIFICATION,
       );
 
-    await this.mailService.sendMail(
+    /* await this.mailService.sendMail(
       user.email,
       `VU Account Verification Code`,
       `Your Request VerificationCode for VU Account is ${verificationCode.code}`,
-    );
+    ); */
   }
 
-  async verifyEmailVerificationCode(
-    input: VerifyEmailVerificationCodeInput,
-    res: Response,
-  ) {
+  async verifyEmailVerificationCode(input: VerifyEmailVerificationCodeInput) {
     const { email, code } = input;
 
     const user = await this.userRepo.findOne({ where: { email } });
@@ -133,20 +130,28 @@ export class AuthService {
     const session = await this.sessionService.createNewSession(user.id);
     const token = await this.helper.generateJwtToken(session.id);
 
-    return this.helper.appendAuthTokenToUser(user, token, res);
+    return this.helper.appendAuthTokenToUser(user, token);
   }
 
-  async login(input: LoginInput, res: Response) {
+  async login(input: LoginInput) {
     const user = await this.userRepo.findOne({
       where: {
         email: input.email,
       },
     });
 
-    if (
-      !user ||
-      user.password !== (await this.helper.hashPassword(input.password))
-    ) {
+    if (!user) {
+      throw new HttpException(
+        'Bad Credentials',
+        StatusCodeEnum.BAD_CREDENTIALS,
+      );
+    }
+
+    const correctPassword = this.helper.comparePassword(
+      input.password,
+      user.password,
+    );
+    if (!correctPassword) {
       throw new HttpException(
         'Bad Credentials',
         StatusCodeEnum.BAD_CREDENTIALS,
@@ -156,6 +161,6 @@ export class AuthService {
     const session = await this.sessionService.createNewSession(user.id);
     const token = await this.helper.generateJwtToken(session.id);
 
-    return this.helper.appendAuthTokenToUser(user, token, res);
+    return this.helper.appendAuthTokenToUser(user, token);
   }
 }

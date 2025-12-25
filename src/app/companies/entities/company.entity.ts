@@ -14,7 +14,7 @@ export class Company extends BaseModel {
   @Column({ nullable: true })
   website: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true }) // TODO: Review similar cases and do migration if needed
   description: string;
 
   @Column({ nullable: true })
