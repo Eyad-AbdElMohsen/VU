@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
-import { User } from '../users/entities/user.entity';
+import { User } from 'src/modules/app/auth-base/user/entities/user.entity';
 
 @Injectable()
 export class HelperService {

@@ -12,7 +12,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { CompanyIndustryEnum } from 'src/app/companies/enums/company-industry.enum';
+import { CompanyIndustryEnum } from '../../../companies/enums/company-industry.enum';
 
 export class RegisterUserInput {
   @IsEmail()

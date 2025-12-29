@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
-import { UserVerificationCodeUseCaseEnum } from 'src/app/users/enums/user-verification-code.enum';
+import { UserVerificationCodeUseCaseEnum } from '../../user/enums/user-verification-code.enum';
 
 export class RequestVerificationCodeInput {
   @IsEmail()

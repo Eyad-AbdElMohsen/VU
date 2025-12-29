@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserVerificationCode } from '../entities/user-verification-codes.entity';
 import { Repository } from 'typeorm';
 import { UserVerificationCodeUseCaseEnum } from '../enums/user-verification-code.enum';
-import { HelperService } from 'src/app/helper/helper.services';
 import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
+import { HelperService } from 'src/modules/core/helper/helper.services';
 
 @Injectable()
 export class UserVerificationCodeService {

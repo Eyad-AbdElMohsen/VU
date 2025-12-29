@@ -2,11 +2,10 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { Transactional } from 'typeorm-transactional';
 import { RegisterManagerInput } from '../inputs/register-manager.input';
-import { Response } from 'express';
 import { RequestVerificationCodeInput } from '../inputs/request-verification-code.input';
-import { User } from 'src/app/users/entities/user.entity';
 import { VerifyEmailVerificationCodeInput } from '../inputs/verify-code.input';
 import { LoginInput } from '../inputs/login.input';
+import { User } from '../../user/entities/user.entity';
 
 @Controller('auth')
 export class AuthController {

@@ -1,7 +1,7 @@
 import { BaseModel } from 'src/config/database/base-model';
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { UserTypeEnum } from '../enums/user.enum';
-import { Company } from 'src/app/companies/entities/company.entity';
+import { Company } from '../../../companies/entities/company.entity';
 
 @Entity()
 export class User extends BaseModel {

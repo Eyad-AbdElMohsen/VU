@@ -2,18 +2,18 @@ import { Module, Session } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/database/typeorm.config';
-import { UserModule } from './app/users/user.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerInterceptor } from './config/interceptors/logger.interceptor';
 import { AppExceptionFilter } from './config/filters/exception.filter';
-import { CompanyModule } from './app/companies/company.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
-import { HelperModule } from './app/helper/helper.module';
-import { AuthModule } from './app/auth/auth.module';
-import { SessionModule } from './app/session/session.module';
-import { FileModule } from './app/file/file.module';
+import { AuthModule } from './modules/app/auth-base/auth/auth.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { HelperModule } from './modules/core/helper/helper.module';
+import { CompanyModule } from './modules/app/companies/company.module';
+import { UserModule } from './modules/app/auth-base/user/user.module';
+import { FileModule } from './modules/core/file/file.module';
+import { SessionModule } from './modules/app/auth-base/session/session.module';
 
 @Module({
   imports: [

@@ -1,20 +1,19 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { RegisterManagerInput } from '../inputs/register-manager.input';
-import { CompanyService } from 'src/app/companies/services/company.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/app/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
-import { HelperService } from 'src/app/helper/helper.services';
-import { UserVerificationCodeService } from 'src/app/users/services/user-verification-code.service';
-import { UserVerificationCodeUseCaseEnum } from 'src/app/users/enums/user-verification-code.enum';
-import { UserTypeEnum } from 'src/app/users/enums/user.enum';
-import { SessionService } from 'src/app/session/services/session.service';
-import { Response } from 'express';
 import { RequestVerificationCodeInput } from '../inputs/request-verification-code.input';
-import { MailService } from 'src/app/mail/services/mail.service';
+import { MailService } from 'src/modules/core/mail/services/mail.service';
 import { VerifyEmailVerificationCodeInput } from '../inputs/verify-code.input';
 import { LoginInput } from '../inputs/login.input';
+import { CompanyService } from '../../../companies/services/company.service';
+import { HelperService } from 'src/modules/core/helper/helper.services';
+import { User } from '../../user/entities/user.entity';
+import { UserVerificationCodeService } from '../../user/services/user-verification-code.service';
+import { SessionService } from '../../session/services/session.service';
+import { UserVerificationCodeUseCaseEnum } from '../../user/enums/user-verification-code.enum';
+import { UserTypeEnum } from '../../user/enums/user.enum';
 
 @Injectable()
 export class AuthService {

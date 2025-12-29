@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
-import { CompanyModule } from '../companies/company.module';
-import { UserModule } from '../users/user.module';
+import { CompanyModule } from '../../companies/company.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../users/entities/user.entity';
 import { SessionModule } from '../session/session.module';
-import { MailModule } from '../mail/mail.module';
+import { MailModule } from '../../../core/mail/mail.module';
+import { User } from '../user/entities/user.entity';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [

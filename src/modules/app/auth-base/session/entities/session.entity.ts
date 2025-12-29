@@ -1,6 +1,6 @@
-import { User } from 'src/app/users/entities/user.entity';
 import { MinModel } from 'src/config/database/min-model';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { User } from '../../user/entities/user.entity';
 
 @Entity()
 export class SessionEntity extends MinModel {
