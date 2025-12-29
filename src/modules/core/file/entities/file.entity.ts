@@ -1,4 +1,4 @@
-import { BaseModel } from 'src/config/database/base-model';
+import { BaseModel } from 'src/common/database/base-model';
 import { Column, Entity } from 'typeorm';
 import { FileModelNameEnum } from '../enums/file-model.enum';
 

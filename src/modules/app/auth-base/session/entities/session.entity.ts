@@ -1,4 +1,4 @@
-import { MinModel } from 'src/config/database/min-model';
+import { MinModel } from 'src/common/database/min-model';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 

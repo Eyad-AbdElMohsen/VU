@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
-import { BaseModel } from 'src/config/database/base-model';
+import { BaseModel } from 'src/common/database/base-model';
 import { UserVerificationCodeUseCaseEnum } from '../enums/user-verification-code.enum';
 
 @Entity()

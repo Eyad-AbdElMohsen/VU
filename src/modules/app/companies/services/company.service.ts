@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from '../entities/company.entity';
 import { Repository } from 'typeorm';
 import { CreateCompanyInput } from 'src/modules/app/auth-base/auth/inputs/register-manager.input';
-import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
+import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
 
 @Injectable()
 export class CompanyService {

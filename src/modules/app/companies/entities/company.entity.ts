@@ -1,4 +1,4 @@
-import { BaseModel } from 'src/config/database/base-model';
+import { BaseModel } from 'src/common/database/base-model';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { CompanyIndustryEnum } from '../enums/company-industry.enum';
 import { User } from '../../auth-base/user/entities/user.entity';

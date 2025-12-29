@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { RegisterManagerInput } from '../inputs/register-manager.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
+import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
 import { RequestVerificationCodeInput } from '../inputs/request-verification-code.input';
 import { MailService } from 'src/modules/core/mail/services/mail.service';
 import {

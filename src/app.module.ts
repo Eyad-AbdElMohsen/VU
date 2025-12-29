@@ -1,10 +1,9 @@
 import { Module, Session } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmConfig } from './config/database/typeorm.config';
+import { typeOrmConfig } from './common/database/typeorm.config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggerInterceptor } from './config/interceptors/logger.interceptor';
-import { AppExceptionFilter } from './config/filters/exception.filter';
+import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { AuthModule } from './modules/app/auth-base/auth/auth.module';
@@ -14,6 +13,7 @@ import { CompanyModule } from './modules/app/companies/company.module';
 import { UserModule } from './modules/app/auth-base/user/user.module';
 import { FileModule } from './modules/core/file/file.module';
 import { SessionModule } from './modules/app/auth-base/session/session.module';
+import { AppExceptionFilter } from './common/filters/exception.filter';
 
 @Module({
   imports: [

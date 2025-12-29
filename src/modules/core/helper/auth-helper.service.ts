@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
+import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/modules/app/auth-base/user/entities/user.entity';
