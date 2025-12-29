@@ -9,14 +9,13 @@ export abstract class BaseModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp without time zone' })
+  @CreateDateColumn({ type: 'timestamp without time zone' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp without time zone' })
+  @UpdateDateColumn({ type: 'timestamp without time zone' })
   updatedAt: Date;
 
   @DeleteDateColumn({
-    name: 'deleted_at',
     type: 'timestamp without time zone',
     nullable: true,
   })
