@@ -1,7 +1,10 @@
 import { Body, Controller, Param, Post, Req } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { Transactional } from 'typeorm-transactional';
-import { RegisterManagerInput } from '../inputs/register-manager.input';
+import {
+  RegisterManagerInput,
+  RegisterUserInput,
+} from '../inputs/register-manager.input';
 import { RequestVerificationCodeInput } from '../inputs/request-verification-code.input';
 import {
   ResetPasswordInput,
@@ -22,6 +25,15 @@ export class AuthController {
     @Body('input') input: RegisterManagerInput,
   ): Promise<User> {
     return await this.authService.registerCompanyManager(input);
+  }
+
+  @Transactional()
+  @Post('companies/:companyId/join_request')
+  async newCompanyJoinRequest(
+    @Body('input') input: RegisterUserInput,
+    @Param('companyId') companyId: string,
+  ) {
+    return await this.authService.newCompanyJoinRequest(input, companyId);
   }
 
   @Transactional()

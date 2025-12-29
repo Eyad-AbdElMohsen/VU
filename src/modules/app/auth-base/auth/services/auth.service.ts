@@ -1,5 +1,8 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { RegisterManagerInput } from '../inputs/register-manager.input';
+import {
+  RegisterManagerInput,
+  RegisterUserInput,
+} from '../inputs/register-manager.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
@@ -32,8 +35,25 @@ export class AuthService {
   async registerCompanyManager(input: RegisterManagerInput) {
     const { companyInput, userInput } = input;
 
+    const newUser = await this.registerUser(
+      userInput,
+      UserTypeEnum.COMPANY_USER,
+    );
+
+    const newCompany = await this.companyService.createNewCompany(
+      companyInput,
+      newUser.id,
+    );
+
+    newUser.companyId = newCompany.id;
+    await this.userRepo.save(newUser);
+
+    return newUser;
+  }
+
+  private async registerUser(input: RegisterUserInput, userType: UserTypeEnum) {
     const isUserExist = await this.userRepo.findOne({
-      where: { email: userInput.email },
+      where: { email: input.email },
     });
     if (isUserExist && isUserExist.verified) {
       throw new HttpException(
@@ -42,9 +62,9 @@ export class AuthService {
       );
     }
     //Delete any unverified user with this email
-    await this.userRepo.delete({ email: userInput.email });
+    await this.userRepo.delete({ email: input.email });
 
-    if (userInput.password !== userInput.confirmPassword) {
+    if (input.password !== input.confirmPassword) {
       throw new HttpException(
         'Password Must be similar to ConfirmPassword',
         StatusCodeEnum.INVALID_PASSWORD,
@@ -54,17 +74,16 @@ export class AuthService {
     // TODO: validate profile pic url
 
     const newUser = await this.userRepo.save({
-      ...userInput,
+      ...input,
       verified: false,
-      userType: UserTypeEnum.COMPANY_MANAGER,
-      password: await this.authHelper.hashPassword(userInput.password),
+      userType,
+      password: await this.authHelper.hashPassword(input.password),
     });
 
     await this.userVerificationCodeService.createVerificationCode(
       newUser.id,
       UserVerificationCodeUseCaseEnum.EMAIL_VERIFICATION,
     );
-    await this.companyService.createNewCompany(companyInput, newUser.id);
 
     return newUser;
   }
@@ -195,6 +214,19 @@ export class AuthService {
 
   async logoutFromAllDevices(userId: string) {
     await this.sessionService.deleteUserSessions(userId);
+
+    return true;
+  }
+
+  async newCompanyJoinRequest(input: RegisterUserInput, companyId: string) {
+    const company = await this.companyService.getCompanyById(companyId);
+
+    const newUser = await this.registerUser(input, UserTypeEnum.COMPANY_USER);
+
+    await this.companyService.addNewUserRequestToCompany(
+      company.id,
+      newUser.id,
+    );
 
     return true;
   }

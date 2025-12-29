@@ -43,6 +43,7 @@ export class AuthGuard implements CanActivate {
 
     req.user = user;
     req.sessionId = sessionId;
+    req.companyId = user.companyId;
     return true;
   }
 
@@ -53,9 +54,9 @@ export class AuthGuard implements CanActivate {
       },
     });
 
-    if (!user) {
-      throw new NotFoundException('No User Found With this Session');
-    }
+    if (!user) throw new NotFoundException('No User Found With this Session');
+
+    if (!user.verified) throw new ForbiddenException('You are not verified');
 
     return user;
   }

@@ -10,6 +10,7 @@ import {
 import { UserTypeEnum } from '../enums/user.enum';
 import { Company } from '../../../companies/entities/company.entity';
 import { SessionEntity } from '../../session/entities/session.entity';
+import { CompanyUser } from 'src/modules/app/companies/entities/company-user.entity';
 
 @Entity()
 export class User extends BaseModel {
@@ -31,10 +32,6 @@ export class User extends BaseModel {
   @Column({ nullable: true })
   jobTitle: string;
 
-  // should be in staff data
-  // @Column({ default: false })
-  // approvedByManager: boolean
-
   @Column({ default: false })
   verified: boolean;
 
@@ -48,12 +45,6 @@ export class User extends BaseModel {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  @ManyToOne(() => Company, (company) => company.users, {
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({ name: 'companyId' })
-  company: Company;
-
   @Column({ nullable: true })
   companyId: string;
 
@@ -62,4 +53,7 @@ export class User extends BaseModel {
 
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions: SessionEntity[];
+
+  @OneToMany(() => CompanyUser, (companyUser) => companyUser.company)
+  companyUsers: CompanyUser[];
 }

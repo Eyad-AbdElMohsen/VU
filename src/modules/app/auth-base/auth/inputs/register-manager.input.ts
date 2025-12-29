@@ -53,8 +53,6 @@ export class RegisterUserInput {
   @IsOptional()
   @IsString()
   profilePictureUrl?: string;
-
-  // jobId, department
 }
 
 export class CreateCompanyInput {
