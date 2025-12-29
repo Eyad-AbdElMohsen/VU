@@ -8,19 +8,19 @@ import { MailService } from 'src/modules/core/mail/services/mail.service';
 import { VerifyEmailVerificationCodeInput } from '../inputs/verify-code.input';
 import { LoginInput } from '../inputs/login.input';
 import { CompanyService } from '../../../companies/services/company.service';
-import { HelperService } from 'src/modules/core/helper/helper.services';
 import { User } from '../../user/entities/user.entity';
 import { UserVerificationCodeService } from '../../user/services/user-verification-code.service';
 import { SessionService } from '../../session/services/session.service';
 import { UserVerificationCodeUseCaseEnum } from '../../user/enums/user-verification-code.enum';
 import { UserTypeEnum } from '../../user/enums/user.enum';
+import { AuthHelperService } from 'src/modules/core/helper/auth-helper.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly companyService: CompanyService,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
-    private readonly helper: HelperService,
+    private readonly authHelper: AuthHelperService,
     private readonly userVerificationCodeService: UserVerificationCodeService,
     private readonly sessionService: SessionService,
     private readonly mailService: MailService,
@@ -54,7 +54,7 @@ export class AuthService {
       ...userInput,
       verified: false,
       userType: UserTypeEnum.COMPANY_MANAGER,
-      password: await this.helper.hashPassword(userInput.password),
+      password: await this.authHelper.hashPassword(userInput.password),
     });
 
     await this.userVerificationCodeService.createVerificationCode(
@@ -127,9 +127,9 @@ export class AuthService {
     });
 
     const session = await this.sessionService.createNewSession(user.id);
-    const token = await this.helper.generateJwtToken(session.id);
+    const token = await this.authHelper.generateJwtToken(session.id);
 
-    return this.helper.appendAuthTokenToUser(user, token);
+    return this.authHelper.appendAuthTokenToUser(user, token);
   }
 
   async login(input: LoginInput) {
@@ -146,7 +146,7 @@ export class AuthService {
       );
     }
 
-    const correctPassword = await this.helper.comparePassword(
+    const correctPassword = await this.authHelper.comparePassword(
       input.password,
       user.password,
     );
@@ -158,8 +158,8 @@ export class AuthService {
     }
 
     const session = await this.sessionService.createNewSession(user.id);
-    const token = await this.helper.generateJwtToken(session.id);
+    const token = await this.authHelper.generateJwtToken(session.id);
 
-    return this.helper.appendAuthTokenToUser(user, token);
+    return this.authHelper.appendAuthTokenToUser(user, token);
   }
 }

@@ -1,7 +1,15 @@
 import { BaseModel } from 'src/config/database/base-model';
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { UserTypeEnum } from '../enums/user.enum';
 import { Company } from '../../../companies/entities/company.entity';
+import { SessionEntity } from '../../session/entities/session.entity';
 
 @Entity()
 export class User extends BaseModel {
@@ -51,4 +59,7 @@ export class User extends BaseModel {
 
   @OneToOne(() => Company, (company) => company.manager, { nullable: true })
   ownedCompany: Company;
+
+  @OneToMany(() => SessionEntity, (session) => session.user)
+  sessions: SessionEntity[];
 }

@@ -4,7 +4,10 @@ import { User } from '../../user/entities/user.entity';
 
 @Entity()
 export class SessionEntity extends MinModel {
-  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => User, (user) => user.sessions, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
