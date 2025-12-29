@@ -15,4 +15,14 @@ export class SessionService {
       userId,
     });
   }
+
+  // If sessionId is undefined, it will terminate all user sessions
+  async deleteUserSessions(userId: string, sessionId?: number) {
+    await this.sessionRepo.delete({
+      userId,
+      ...(sessionId && { id: sessionId }),
+    });
+
+    return true;
+  }
 }

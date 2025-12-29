@@ -5,7 +5,10 @@ import { Repository } from 'typeorm';
 import { StatusCodeEnum } from 'src/config/enums/status-code.enum';
 import { RequestVerificationCodeInput } from '../inputs/request-verification-code.input';
 import { MailService } from 'src/modules/core/mail/services/mail.service';
-import { VerifyEmailVerificationCodeInput } from '../inputs/verify-code.input';
+import {
+  ResetPasswordInput,
+  VerifyEmailVerificationCodeInput,
+} from '../inputs/verify-code.input';
 import { LoginInput } from '../inputs/login.input';
 import { CompanyService } from '../../../companies/services/company.service';
 import { User } from '../../user/entities/user.entity';
@@ -161,5 +164,38 @@ export class AuthService {
     const token = await this.authHelper.generateJwtToken(session.id);
 
     return this.authHelper.appendAuthTokenToUser(user, token);
+  }
+
+  async resetPassword(input: ResetPasswordInput) {
+    const { code, email, newPassword } = input;
+
+    const user = await this.userRepo.findOne({ where: { email } });
+    if (!user) {
+      throw new HttpException('User Not Found', StatusCodeEnum.NOT_FOUND);
+    }
+
+    await this.userVerificationCodeService.verifyVerificationCode(
+      user.id,
+      code,
+      UserVerificationCodeUseCaseEnum.PASSWORD_RESET,
+    );
+
+    await this.userRepo.update(user.id, {
+      password: await this.authHelper.hashPassword(newPassword),
+    });
+
+    return true;
+  }
+
+  async logout(userId: string, sessionId: number) {
+    await this.sessionService.deleteUserSessions(userId, sessionId);
+
+    return true;
+  }
+
+  async logoutFromAllDevices(userId: string) {
+    await this.sessionService.deleteUserSessions(userId);
+
+    return true;
   }
 }

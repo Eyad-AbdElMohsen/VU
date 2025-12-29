@@ -41,7 +41,8 @@ export class AuthGuard implements CanActivate {
       throw new ForbiddenException('You can not perform this action');
     }
 
-    req.user = user
+    req.user = user;
+    req.sessionId = sessionId;
     return true;
   }
 
@@ -53,7 +54,7 @@ export class AuthGuard implements CanActivate {
     });
 
     if (!user) {
-      throw new NotFoundException('User Not Found');
+      throw new NotFoundException('No User Found With this Session');
     }
 
     return user;
