@@ -18,12 +18,13 @@ export class CompanyAuthGuard implements CanActivate {
       CompanyUserTypeEnum[]
     >(COMPANY_TYPES_KEY, [context.getHandler(), context.getClass()]);
     const req: AppRequest = context.switchToHttp().getRequest();
-    const user = req.user;
+    const user = req.user!;
 
-    if (
-      allowedTypes?.length &&
-      !allowedTypes.includes(user!.companyUser.type)
-    ) {
+    if (!user.companyUser.approved) {
+      throw new ForbiddenException('You can not perform this action');
+    }
+
+    if (allowedTypes?.length && !allowedTypes.includes(user.companyUser.type)) {
       throw new ForbiddenException('You can not perform this action');
     }
 

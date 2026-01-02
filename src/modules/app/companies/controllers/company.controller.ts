@@ -5,6 +5,8 @@ import { AppRequest } from 'src/common/types/request.type';
 import { CompanyAuth } from 'src/common/decorators/company-auth.decorator';
 import { CompanyUserTypeEnum } from '../enums/company-user-type.enum';
 import { EditCompanyInput } from '../inputs/edit-company.input';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { User } from '../../auth-base/user/entities/user.entity';
 
 @Controller('companies')
 export class CompanyController {
@@ -16,9 +18,12 @@ export class CompanyController {
   @Post('reply_join_request')
   async replyJoinRequest(
     @Body('input') input: ReplyJoinRequestInput,
-    @Req() { companyId }: AppRequest,
+    @CurrentUser() user: User,
   ) {
-    return await this.companyService.replyJoinRequest(input, companyId!);
+    return await this.companyService.replyJoinRequest(
+      input,
+      user.companyUser.companyId,
+    );
   }
 
   @CompanyAuth({
@@ -27,9 +32,12 @@ export class CompanyController {
   @Post('remove_from_company')
   async removeFromCompany(
     @Body('userId') userId: string,
-    @Req() { companyId }: AppRequest,
+    @CurrentUser() user: User,
   ) {
-    return await this.companyService.removeUserFromCompany(userId, companyId!);
+    return await this.companyService.removeUserFromCompany(
+      userId,
+      user.companyUser.companyId,
+    );
   }
 
   @CompanyAuth({
@@ -38,8 +46,11 @@ export class CompanyController {
   @Patch('edit')
   async editCompany(
     @Body() input: EditCompanyInput,
-    @Req() { companyId }: AppRequest,
+    @CurrentUser() user: User,
   ) {
-    return await this.companyService.editCompany(companyId!, input);
+    return await this.companyService.editCompany(
+      user.companyUser.companyId,
+      input,
+    );
   }
 }

@@ -27,10 +27,6 @@ export class Company extends BaseModel {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @OneToOne(() => User, (user) => user.ownedCompany, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'managerId' })
-  manager: User;
-
   @Column()
   managerId: string;
 

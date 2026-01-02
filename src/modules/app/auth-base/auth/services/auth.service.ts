@@ -40,13 +40,7 @@ export class AuthService {
       UserTypeEnum.COMPANY_USER,
     );
 
-    const newCompany = await this.companyService.createNewCompany(
-      companyInput,
-      newUser.id,
-    );
-
-    newUser.companyId = newCompany.id;
-    await this.userRepo.save(newUser);
+    await this.companyService.createNewCompany(companyInput, newUser.id);
 
     return newUser;
   }

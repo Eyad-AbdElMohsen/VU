@@ -13,7 +13,9 @@ import {
 import { LoginInput } from '../inputs/login.input';
 import { User } from '../../user/entities/user.entity';
 import { Auth } from 'src/common/decorators/auth.decorator';
-import { AppRequest } from 'src/common/types/request.type';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { SessionEntity } from '../../session/entities/session.entity';
+import { CurrentSessionId } from 'src/common/decorators/session.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -65,14 +67,17 @@ export class AuthController {
   @Transactional()
   @Post('logout')
   @Auth()
-  async logout(@Req() req: AppRequest) {
-    return await this.authService.logout(req.user!.id, req.sessionId!);
+  async logout(
+    @CurrentUser() user: User,
+    @CurrentSessionId() sessionId: number,
+  ) {
+    return await this.authService.logout(user.id, sessionId);
   }
 
   @Transactional()
   @Post('logout_all_devices')
   @Auth()
-  async logoutFromAllDevices(@Req() req: AppRequest) {
-    return await this.authService.logoutFromAllDevices(req.user!.id);
+  async logoutFromAllDevices(@CurrentUser() user: User) {
+    return await this.authService.logoutFromAllDevices(user.id);
   }
 }

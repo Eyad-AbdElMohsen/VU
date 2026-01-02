@@ -121,8 +121,6 @@ export class CompanyService {
         `Congratulations, you have been approved to join <b>${companyUser.company.name}</b>`,
       );
 
-      await this.userRepo.update(userId, { companyId });
-
       return true;
     }
 
@@ -160,7 +158,6 @@ export class CompanyService {
     }
 
     await this.companyUserRepo.delete({ userId, companyId });
-    await this.userRepo.update(userId, { companyId: undefined });
 
     await this.mailService.sendMail(
       companyUser.user.email,

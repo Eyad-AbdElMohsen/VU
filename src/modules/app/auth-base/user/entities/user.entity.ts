@@ -45,12 +45,6 @@ export class User extends BaseModel {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  @Column({ nullable: true })
-  companyId: string;
-
-  @OneToOne(() => Company, (company) => company.manager, { nullable: true })
-  ownedCompany: Company;
-
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions: SessionEntity[];
 
