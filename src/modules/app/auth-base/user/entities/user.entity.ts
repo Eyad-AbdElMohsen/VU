@@ -54,6 +54,6 @@ export class User extends BaseModel {
   @OneToMany(() => SessionEntity, (session) => session.user)
   sessions: SessionEntity[];
 
-  @OneToMany(() => CompanyUser, (companyUser) => companyUser.company)
-  companyUsers: CompanyUser[];
+  @OneToOne(() => CompanyUser, (companyUser) => companyUser.user)
+  companyUser: CompanyUser;
 }

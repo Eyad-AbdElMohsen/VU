@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { User } from '../../auth-base/user/entities/user.entity';
 import { Company } from './company.entity';
 import { MinModel } from 'src/common/database/min-model';
@@ -9,7 +9,7 @@ export class CompanyUser extends MinModel {
   @Column()
   userId: string;
 
-  @ManyToOne(() => User, (user) => user.companyUsers, {
+  @OneToOne(() => User, (user) => user.companyUser, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })

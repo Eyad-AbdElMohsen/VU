@@ -66,7 +66,7 @@ export class CompanyService {
 
   async addNewUserRequestToCompany(companyId: string, userId: string) {
     const alreadyInCompany = await this.companyUserRepo.findOne({
-      where: { userId, approved: true },
+      where: { userId },
     });
 
     if (alreadyInCompany) {
@@ -114,8 +114,6 @@ export class CompanyService {
       companyUser.approved = true;
       companyUser.type = type;
       await this.companyUserRepo.save(companyUser);
-
-      await this.companyUserRepo.delete({ userId, companyId: Not(companyId) });
 
       await this.mailService.sendMail(
         companyUser.user.email,

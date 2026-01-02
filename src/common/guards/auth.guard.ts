@@ -6,10 +6,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Request } from 'express';
 import { UserTypeEnum } from 'src/modules/app/auth-base/user/enums/user.enum';
 import { AuthHelperService } from 'src/modules/core/helper/auth-helper.service';
-import { TYPES_KEY } from '../constants/user-type-key';
+import { USER_TYPES_KEY } from '../constants/user-type-key';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/modules/app/auth-base/user/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -24,7 +23,7 @@ export class AuthGuard implements CanActivate {
   ) {}
   async canActivate(context: ExecutionContext) {
     const allowedTypes = this.reflector.getAllAndOverride<UserTypeEnum[]>(
-      TYPES_KEY,
+      USER_TYPES_KEY,
       [context.getHandler(), context.getClass()],
     );
 
@@ -51,6 +50,9 @@ export class AuthGuard implements CanActivate {
     const user = await this.userRepo.findOne({
       where: {
         sessions: { id: sessionId },
+      },
+      relations: {
+        companyUser: true,
       },
     });
 
