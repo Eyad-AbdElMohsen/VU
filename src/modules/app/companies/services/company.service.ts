@@ -9,6 +9,7 @@ import { ReplyJoinRequestInput } from '../inputs/reply-join-request.input';
 import { MailService } from 'src/modules/core/mail/services/mail.service';
 import { CompanyUserTypeEnum } from '../enums/company-user-type.enum';
 import { User } from '../../auth-base/user/entities/user.entity';
+import { EditCompanyInput } from '../inputs/edit-company.input';
 
 @Injectable()
 export class CompanyService {
@@ -170,5 +171,11 @@ export class CompanyService {
     );
 
     return true;
+  }
+
+  async editCompany(companyId: string, input: EditCompanyInput) {
+    const company = await this.getCompanyById(companyId);
+    Object.assign(company, input);
+    return await this.companyRepo.save(company);
   }
 }

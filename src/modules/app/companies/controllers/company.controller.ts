@@ -1,50 +1,45 @@
-import {
-  Body,
-  Controller,
-  Param,
-  Post,
-  Req,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Body, Controller, Patch, Post, Req } from '@nestjs/common';
 import { CompanyService } from '../services/company.service';
-import { Auth } from 'src/common/decorators/auth.decorator';
-import { UserTypeEnum } from '../../auth-base/user/enums/user.enum';
 import { ReplyJoinRequestInput } from '../inputs/reply-join-request.input';
 import { AppRequest } from 'src/common/types/request.type';
+import { CompanyAuth } from 'src/common/decorators/company-auth.decorator';
+import { CompanyUserTypeEnum } from '../enums/company-user-type.enum';
+import { EditCompanyInput } from '../inputs/edit-company.input';
 
 @Controller('companies')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
-  @Auth({
-    types: [UserTypeEnum.COMPANY_USER],
+  @CompanyAuth({
+    types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.EDITOR],
   })
-  // TODO: Add company auth decorator that take action
-  // @CompanyAuth({ types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.VIEWIER] })
   @Post('reply_join_request')
   async replyJoinRequest(
     @Body('input') input: ReplyJoinRequestInput,
     @Req() { companyId }: AppRequest,
   ) {
-    //TODO: Remove this condition after adding decorator
-    if (!companyId) {
-      throw new UnauthorizedException('Company not found');
-    }
-    return await this.companyService.replyJoinRequest(input, companyId);
+    return await this.companyService.replyJoinRequest(input, companyId!);
   }
 
-  @Auth({
-    types: [UserTypeEnum.COMPANY_USER],
+  @CompanyAuth({
+    types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.EDITOR],
   })
   @Post('remove_from_company')
   async removeFromCompany(
     @Body('userId') userId: string,
     @Req() { companyId }: AppRequest,
   ) {
-    //TODO: Remove this condition after adding decorator
-    if (!companyId) {
-      throw new UnauthorizedException('Company not found');
-    }
-    return await this.companyService.removeUserFromCompany(userId, companyId);
+    return await this.companyService.removeUserFromCompany(userId, companyId!);
+  }
+
+  @CompanyAuth({
+    types: [CompanyUserTypeEnum.OWNER],
+  })
+  @Patch('edit')
+  async editCompany(
+    @Body() input: EditCompanyInput,
+    @Req() { companyId }: AppRequest,
+  ) {
+    return await this.companyService.editCompany(companyId!, input);
   }
 }

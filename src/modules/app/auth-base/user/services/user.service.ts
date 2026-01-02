@@ -2,6 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
+import { EditUserInput } from '../inputs/edit-user.input';
+import { ChangePasswordInput } from '../inputs/change-password.input';
+import * as bcrypt from 'bcrypt';
+import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
 
 @Injectable()
 export class UserService {
@@ -21,5 +25,41 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async editUser(id: string, input: EditUserInput) {
+    const user = await this.getUserById(id);
+    Object.assign(user, input);
+    return await this.userRepo.save(user);
+  }
+
+  async changePassword(id: string, input: ChangePasswordInput) {
+    const user = await this.getUserById(id);
+
+    if (input.confirmPassword !== input.password) {
+      throw new HttpException(
+        'Password and confirm password must be the same',
+        StatusCodeEnum.BAD_REQUEST,
+      );
+    }
+
+    if (!(await bcrypt.compare(input.oldPassword, user.password))) {
+      throw new HttpException(
+        'Old password is incorrect',
+        StatusCodeEnum.BAD_REQUEST,
+      );
+    }
+
+    if (input.oldPassword === input.password) {
+      throw new HttpException(
+        'This password is the same as the old one',
+        StatusCodeEnum.BAD_REQUEST,
+      );
+    }
+
+    user.password = await bcrypt.hash(input.password, 10);
+    await this.userRepo.save(user);
+
+    return true;
   }
 }
