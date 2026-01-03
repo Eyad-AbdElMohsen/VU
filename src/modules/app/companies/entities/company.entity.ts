@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { CompanyIndustryEnum } from '../enums/company-industry.enum';
 import { User } from '../../auth-base/user/entities/user.entity';
 import { CompanyUser } from './company-user.entity';
+import { Mock } from '../../mocks/entities/mock.entity';
 
 @Entity()
 export class Company extends BaseModel {
@@ -32,4 +33,7 @@ export class Company extends BaseModel {
 
   @OneToMany(() => CompanyUser, (companyUser) => companyUser.company)
   companyUsers: CompanyUser[];
+
+  @OneToMany(() => Mock, (mock) => mock.company)
+  mocks: Mock[];
 }

@@ -14,6 +14,7 @@ import { UserModule } from './modules/app/auth-base/user/user.module';
 import { FileModule } from './modules/core/file/file.module';
 import { SessionModule } from './modules/app/auth-base/session/session.module';
 import { AppExceptionFilter } from './common/filters/exception.filter';
+import { MockModule } from './modules/app/mocks/mock.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AppExceptionFilter } from './common/filters/exception.filter';
     AuthModule,
     SessionModule,
     FileModule,
+    MockModule,
   ],
   controllers: [],
   providers: [
