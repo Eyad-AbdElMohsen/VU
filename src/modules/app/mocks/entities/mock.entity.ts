@@ -27,6 +27,9 @@ export class Mock extends BaseModel {
   @Column()
   title: string;
 
+  @Column({ type: 'text' })
+  description: string;
+
   @Column({ type: 'enum', enum: DifficultyEnum })
   difficulty: DifficultyEnum;
 
@@ -35,9 +38,6 @@ export class Mock extends BaseModel {
 
   @Column({ type: 'int' })
   estimatedTimeInMinutes: number;
-
-  @Column({ type: 'text' })
-  description: string;
 
   @Column({ type: 'simple-array' })
   technologies: string[];

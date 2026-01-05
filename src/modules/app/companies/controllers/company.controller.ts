@@ -43,7 +43,7 @@ export class CompanyController {
   @CompanyAuth({
     types: [CompanyUserTypeEnum.OWNER],
   })
-  @Patch('edit')
+  @Patch('update')
   async editCompany(
     @Body() input: EditCompanyInput,
     @CurrentUser() user: User,

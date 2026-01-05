@@ -9,4 +9,8 @@ export class AppHelperService {
       .toString()
       .slice(0, length);
   }
+
+  trimAllSpaces(str: string) {
+    return str.replace(/\s/g, '');
+  }
 }

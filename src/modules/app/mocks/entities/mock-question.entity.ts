@@ -16,10 +16,10 @@ export class MockQuestion extends BaseModel {
   mockId: string;
 
   @Column({ type: 'text' })
-  questionTitle: string;
+  title: string;
 
   @Column({ type: 'text' })
-  questionDescription: string;
+  description: string;
 
   @Column({ type: 'enum', enum: DifficultyEnum })
   difficulty: DifficultyEnum;
