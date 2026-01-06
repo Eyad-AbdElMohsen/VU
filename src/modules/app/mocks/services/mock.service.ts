@@ -129,8 +129,8 @@ export class MockService {
     return mock;
   }
 
-  async updateMock(input: UpdateMockInput, user: User) {
-    const { mockId, jobIds, questions, ...mockData } = input;
+  async updateMock(mockId: string, input: UpdateMockInput, user: User) {
+    const { jobIds, questions, ...mockData } = input;
 
     let mock = await this.mockRepo.findOne({
       where: { id: mockId },
@@ -186,7 +186,7 @@ export class MockService {
 
     this.validateMockUser(mock, user);
 
-    await this.mockRepo.delete(mockId);
+    await this.mockRepo.remove(mock);
     return true;
   }
 

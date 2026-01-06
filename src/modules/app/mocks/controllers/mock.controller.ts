@@ -1,4 +1,14 @@
-import { Body, Controller, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { MockService } from '../services/mock.service';
 import { CompanyAuth } from 'src/common/decorators/company-auth.decorator';
 import { CompanyUserTypeEnum } from '../../companies/enums/company-user-type.enum';
@@ -15,13 +25,16 @@ export class MockController {
   constructor(private readonly mockService: MockService) {}
 
   // --------------------------- GET ---------------------------
-  @Post('get')
+  @Get('get/:mockId')
   @CompanyAuth()
-  async getMock(@Body('mockId') mockId: string, @CurrentUser() user: User) {
+  async getMock(
+    @Param('mockId', ParseUUIDPipe) mockId: string,
+    @CurrentUser() user: User,
+  ) {
     return this.mockService.getMock(mockId, user);
   }
 
-  @Post('paginated')
+  @Get('get_paginated')
   @CompanyAuth()
   async getPaginatedMocks(
     @CurrentUser() user: User,
@@ -42,22 +55,28 @@ export class MockController {
     return this.mockService.createMock(input, user);
   }
 
-  @Post('update')
+  // --------------------------- PATCH ---------------------------
+  @Patch('update/:mockId')
   @CompanyAuth({
     types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.EDITOR],
   })
   async updateMock(
+    @Param('mockId', ParseUUIDPipe) mockId: string,
     @Body('input') input: UpdateMockInput,
     @CurrentUser() user: User,
   ) {
-    return this.mockService.updateMock(input, user);
+    return this.mockService.updateMock(mockId, input, user);
   }
 
-  @Post('delete')
+  // --------------------------- DELETE ---------------------------
+  @Delete('delete/:mockId')
   @CompanyAuth({
     types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.EDITOR],
   })
-  async deleteMock(@Body('mockId') mockId: string, @CurrentUser() user: User) {
+  async deleteMock(
+    @Param('mockId', ParseUUIDPipe) mockId: string,
+    @CurrentUser() user: User,
+  ) {
     return this.mockService.deleteMock(mockId, user);
   }
 }

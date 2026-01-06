@@ -3,7 +3,6 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Company } from '../../companies/entities/company.entity';
 import { JobTypeEnum } from '../enums/job-type.enum';
 import { JobStatusEnum } from '../enums/job-status.enum';
-import { JobDepartmentEnum } from '../enums/job-department.enum';
 import { JobMock } from './job-mock.entity';
 
 @Entity()
@@ -24,17 +23,14 @@ export class Job extends BaseModel {
   @Column({ type: 'enum', enum: JobTypeEnum })
   type: JobTypeEnum;
 
-  @Column({ type: 'enum', enum: JobDepartmentEnum })
-  department: JobDepartmentEnum;
+  @Column({ type: 'simple-array' })
+  departments: string[];
 
   @Column({ type: 'text' })
   requirements: string;
 
   @Column({ type: 'boolean', default: true })
-  sendEmailWhenApprove: boolean;
-
-  @Column({ type: 'boolean', default: true })
-  sendEmailWhenReject: boolean;
+  sendEmailToCandidates: boolean;
 
   @Column({ type: 'boolean', default: true })
   shareFeedback: boolean;

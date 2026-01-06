@@ -51,12 +51,10 @@ export class CreateMockInput {
   @IsNotEmpty({ each: true })
   topics: string[];
 
-  @ArrayNotEmpty()
   @ArrayMaxSize(10)
   @IsUUID('4', { each: true })
   jobIds: string[];
 
-  // jobIds
   @IsBoolean()
   enableFollowUpQuestions: boolean;
 
