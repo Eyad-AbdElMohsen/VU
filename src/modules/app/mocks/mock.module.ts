@@ -6,9 +6,10 @@ import { MockService } from './services/mock.service';
 import { MockQuestion } from './entities/mock-question.entity';
 import { User } from '../auth-base/user/entities/user.entity';
 import { JobMock } from '../jobs/entities/job-mock.entity';
+import { Job } from '../jobs/entities/job.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Mock, MockQuestion, User, JobMock])],
+  imports: [TypeOrmModule.forFeature([Mock, MockQuestion, User, JobMock, Job])],
   controllers: [MockController],
   providers: [MockService],
   exports: [MockService],

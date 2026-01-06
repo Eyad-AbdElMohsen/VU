@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsPositive,
   IsString,
+  IsUUID,
   MaxLength,
   MinLength,
   ValidateNested,
@@ -50,9 +51,12 @@ export class CreateMockInput {
   @IsNotEmpty({ each: true })
   topics: string[];
 
-  //TODO: Add it after implementing job management
-  // jobIds
+  @ArrayNotEmpty()
+  @ArrayMaxSize(10)
+  @IsUUID('4', { each: true })
+  jobIds: string[];
 
+  // jobIds
   @IsBoolean()
   enableFollowUpQuestions: boolean;
 
