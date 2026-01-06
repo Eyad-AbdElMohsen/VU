@@ -4,6 +4,7 @@ import { CompanyIndustryEnum } from '../enums/company-industry.enum';
 import { User } from '../../auth-base/user/entities/user.entity';
 import { CompanyUser } from './company-user.entity';
 import { Mock } from '../../mocks/entities/mock.entity';
+import { Job } from '../../jobs/entities/job.entity';
 
 @Entity()
 export class Company extends BaseModel {
@@ -36,4 +37,7 @@ export class Company extends BaseModel {
 
   @OneToMany(() => Mock, (mock) => mock.company)
   mocks: Mock[];
+
+  @OneToMany(() => Job, (job) => job.company)
+  jobs: Job[];
 }

@@ -11,6 +11,7 @@ import { MockTypeEnum } from '../enums/mock-type.enum';
 import { BaseModel } from 'src/common/database/base-model';
 import { MockQuestion } from './mock-question.entity';
 import { DifficultyEnum } from '../enums/difficulty.enum';
+import { JobMock } from '../../jobs/entities/job-mock.entity';
 
 @Entity()
 @Unique(['title', 'companyId'])
@@ -53,4 +54,7 @@ export class Mock extends BaseModel {
 
   @OneToMany(() => MockQuestion, (mockQuestion) => mockQuestion.mock)
   questions: MockQuestion[];
+
+  @OneToMany(() => JobMock, (jobMock) => jobMock.mock)
+  mockJobs: JobMock[];
 }
