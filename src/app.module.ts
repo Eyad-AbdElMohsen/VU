@@ -16,6 +16,7 @@ import { SessionModule } from './modules/app/auth-base/session/session.module';
 import { AppExceptionFilter } from './common/filters/exception.filter';
 import { MockModule } from './modules/app/mocks/mock.module';
 import { JobModule } from './modules/app/jobs/job.module';
+import { CandidateModule } from './modules/app/candidates/candidate.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { JobModule } from './modules/app/jobs/job.module';
     FileModule,
     MockModule,
     JobModule,
+    CandidateModule,
   ],
   controllers: [],
   providers: [

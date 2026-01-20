@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { JobService } from '../services/job.service';
 import { CompanyAuth } from 'src/common/decorators/company-auth.decorator';
@@ -15,6 +16,9 @@ import { CreateJobInput } from '../inputs/create-job.input';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from '../../auth-base/user/entities/user.entity';
 import { UpdateJobInput } from '../inputs/update-job.input';
+import { PaginatedJobQueryInput } from '../inputs/paginated-job-query.input';
+import { Job } from '../entities/job.entity';
+import { PaginatedResponse } from 'src/common/types/paginated-response.type';
 
 @Controller('jobs')
 export class JobController {
@@ -29,7 +33,15 @@ export class JobController {
   ) {
     return this.jobService.getJob(jobId, user);
   }
-  //TODO: Pagination
+
+  @Get('get_paginated')
+  @CompanyAuth()
+  async getPaginatedJobs(
+    @CurrentUser() user: User,
+    @Query() query: PaginatedJobQueryInput,
+  ): Promise<PaginatedResponse<Job>> {
+    return this.jobService.getPaginatedJobs(query, user);
+  }
 
   // ------------------------------- Post --------------------------------------- //
   @CompanyAuth({

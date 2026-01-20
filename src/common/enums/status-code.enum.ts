@@ -13,4 +13,5 @@ export const StatusCodeEnum = {
   MOCK_NOT_FOUND: 608,
   JOB_NOT_FOUND: 609,
   MOCK_IN_USE: 610,
+  CANDIDATE_NOT_FOUND: 611,
 };

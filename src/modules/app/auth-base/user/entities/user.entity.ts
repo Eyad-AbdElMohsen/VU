@@ -1,14 +1,6 @@
 import { BaseModel } from 'src/common/database/base-model';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { UserTypeEnum } from '../enums/user.enum';
-import { Company } from '../../../companies/entities/company.entity';
 import { SessionEntity } from '../../session/entities/session.entity';
 import { CompanyUser } from 'src/modules/app/companies/entities/company-user.entity';
 

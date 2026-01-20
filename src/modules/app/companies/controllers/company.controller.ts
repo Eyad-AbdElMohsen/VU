@@ -1,7 +1,6 @@
 import { Body, Controller, Patch, Post, Req } from '@nestjs/common';
 import { CompanyService } from '../services/company.service';
 import { ReplyJoinRequestInput } from '../inputs/reply-join-request.input';
-import { AppRequest } from 'src/common/types/request.type';
 import { CompanyAuth } from 'src/common/decorators/company-auth.decorator';
 import { CompanyUserTypeEnum } from '../enums/company-user-type.enum';
 import { EditCompanyInput } from '../inputs/edit-company.input';

@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from '../entities/company.entity';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateCompanyInput } from 'src/modules/app/auth-base/auth/inputs/register-manager.input';
 import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
 import { CompanyUser } from '../entities/company-user.entity';

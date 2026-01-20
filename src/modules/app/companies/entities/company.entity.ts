@@ -1,10 +1,10 @@
 import { BaseModel } from 'src/common/database/base-model';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { CompanyIndustryEnum } from '../enums/company-industry.enum';
-import { User } from '../../auth-base/user/entities/user.entity';
 import { CompanyUser } from './company-user.entity';
 import { Mock } from '../../mocks/entities/mock.entity';
 import { Job } from '../../jobs/entities/job.entity';
+import { Candidate } from '../../candidates/entities/candidate.entity';
 
 @Entity()
 export class Company extends BaseModel {
@@ -17,7 +17,7 @@ export class Company extends BaseModel {
   @Column({ nullable: true })
   website: string;
 
-  @Column({ type: 'text', nullable: true }) // TODO: Review similar cases and do migration if needed
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ nullable: true })
@@ -40,4 +40,7 @@ export class Company extends BaseModel {
 
   @OneToMany(() => Job, (job) => job.company)
   jobs: Job[];
+
+  @OneToMany(() => Candidate, (candidate) => candidate.company)
+  candidates: Candidate[];
 }

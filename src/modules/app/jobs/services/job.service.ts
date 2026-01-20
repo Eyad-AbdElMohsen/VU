@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from '../entities/job.entity';
-import { In, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, In, Repository } from 'typeorm';
 import { CreateJobInput } from '../inputs/create-job.input';
 import { User } from '../../auth-base/user/entities/user.entity';
 import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
@@ -9,6 +9,9 @@ import { JobStatusEnum } from '../enums/job-status.enum';
 import { JobMock } from '../entities/job-mock.entity';
 import { Mock } from '../../mocks/entities/mock.entity';
 import { UpdateJobInput } from '../inputs/update-job.input';
+import { PaginatedJobQueryInput } from '../inputs/paginated-job-query.input';
+import { PaginatedResponse } from 'src/common/types/paginated-response.type';
+import { AppHelperService } from 'src/modules/core/helper/helper.services';
 
 @Injectable()
 export class JobService {
@@ -16,6 +19,7 @@ export class JobService {
     @InjectRepository(Job) private readonly jobRepo: Repository<Job>,
     @InjectRepository(JobMock)
     private readonly jobMockRepo: Repository<JobMock>,
+    private readonly appHelper: AppHelperService,
     @InjectRepository(Mock) private readonly mockRepo: Repository<Mock>,
   ) {}
 
@@ -31,6 +35,49 @@ export class JobService {
     this.validateJobUser(job, user);
 
     return job;
+  }
+
+  async getPaginatedJobs(
+    query: PaginatedJobQueryInput,
+    user: User,
+  ): Promise<PaginatedResponse<Job>> {
+    const companyId = user.companyUser.companyId;
+    const { filter, paginate } = query;
+
+    const where: FindOptionsWhere<Job>[] = [{ companyId }];
+
+    if (filter) {
+      if (filter.search) {
+        const search = `%${this.appHelper.trimAllSpaces(filter.search)}%`;
+        where.push({
+          title: ILike(search),
+          description: ILike(search), // TODO: Query builder for departments[] field
+          requirements: ILike(search),
+        });
+      }
+
+      if (filter.status) where.push({ status: filter.status });
+
+      if (filter.type) where.push({ type: filter.type });
+    }
+
+    const page = paginate?.page || 1,
+      limit = paginate?.limit || 10;
+
+    const [items, total] = await this.jobRepo.findAndCount({
+      where,
+      take: limit,
+      skip: (page - 1) * limit,
+      relations: { jobMocks: { mock: true } },
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      items,
+      total,
+      hasNext: total > page * limit,
+      hasPrevious: page > 1,
+    };
   }
 
   async createJob(input: CreateJobInput, user: User) {

@@ -4,6 +4,7 @@ import { Company } from '../../companies/entities/company.entity';
 import { JobTypeEnum } from '../enums/job-type.enum';
 import { JobStatusEnum } from '../enums/job-status.enum';
 import { JobMock } from './job-mock.entity';
+import { Candidate } from '../../candidates/entities/candidate.entity';
 
 @Entity()
 export class Job extends BaseModel {
@@ -46,4 +47,7 @@ export class Job extends BaseModel {
 
   @OneToMany(() => JobMock, (jobMock) => jobMock.job)
   jobMocks: JobMock[];
+
+  @OneToMany(() => Candidate, (candidate) => candidate.job)
+  candidates: Candidate[];
 }
