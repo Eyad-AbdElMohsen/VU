@@ -50,51 +50,40 @@ export class MockService {
     const companyId = user.companyUser.companyId;
     const { filter, paginate } = query;
 
-    const where: FindOptionsWhere<Mock>[] = [{ companyId }];
+    const qb = this.mockRepo
+    .createQueryBuilder('mock')
+    .leftJoinAndSelect('mock.questions', 'question')
+    .leftJoinAndSelect('mock."mockJobs"', 'mockJob')
+    .leftJoinAndSelect('mockJob.job', 'job')
+    .where('mock."companyId" = :companyId', { companyId });
 
     if (filter) {
       if (filter.search) {
         const search = `%${this.appHelper.trimAllSpaces(filter.search)}%`;
-        where.push({
-          title: ILike(search),
-          description: ILike(search),
-          topics: ILike(search),
-          technologies: ILike(search),
-        });
+        qb.andWhere(
+          '(mock.title ILIKE :search OR mock.description ILIKE :search OR mock.topics::text ILIKE :search OR mock.technologies::text ILIKE :search)',
+          { search }
+        );
       }
-
-      if (filter.difficulty) where.push({ difficulty: filter.difficulty });
-
-      if (filter.type) where.push({ type: filter.type });
-
-      if (filter.enableFollowUpQuestions)
-        where.push({ enableFollowUpQuestions: filter.enableFollowUpQuestions });
-
-      if (filter.enableRecordReplay)
-        where.push({ enableRecordReplay: filter.enableRecordReplay });
+      if (filter.difficulty) {
+        qb.andWhere('mock.difficulty = :difficulty', { difficulty: filter.difficulty });
+      }
+      if (filter.type) {
+        qb.andWhere('mock.type = :type', { type: filter.type });
+      }
+      if (filter.enableFollowUpQuestions !== undefined) {
+        qb.andWhere('mock."enableFollowUpQuestions" = :enableFollowUpQuestions', { enableFollowUpQuestions: filter.enableFollowUpQuestions });
+      }
+      if (filter.enableRecordReplay !== undefined) {
+        qb.andWhere('mock."enableRecordReplay" = :enableRecordReplay', { enableRecordReplay: filter.enableRecordReplay });
+      }
     }
 
     const page = paginate?.page || 1,
       limit = paginate?.limit || 10;
 
-    // const [items, total] = await this.mockRepo.findAndCount({
-    //   where,
-    //   take: limit,
-    //   skip: (page - 1) * limit,
-    //   relations: { questions: true, mockJobs: { job: true } },
-    //   order: {
-    //     createdAt: SortDirectionEnum.DESC,
-    //     questions: { order: SortDirectionEnum.ASC },
-    //   },
-    // });
-
-    const [items, total] = await this.mockRepo
-      .createQueryBuilder('mock')
-      .leftJoinAndSelect('mock.questions', 'question')
-      .leftJoinAndSelect('mock.mockJobs', 'mockJob')
-      .leftJoinAndSelect('mockJob.job', 'job')
-      .where(where)
-      .orderBy('mock.createdAt', 'DESC')
+    const [items, total] = await qb
+      .orderBy('mock."createdAt"', 'DESC')
       .addOrderBy('question.order', 'ASC')
       .take(limit)
       .skip((page - 1) * limit)

@@ -13,6 +13,8 @@ async function bootstrap() {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.set('query parser', 'extended');
+
   app.useStaticAssets(join(__dirname, '..', 'public'), {
     prefix: '/public/',
   });

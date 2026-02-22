@@ -58,7 +58,7 @@ export class CompanyService {
       userId: currentUserId,
       companyId: newCompany.id,
       approved: true,
-      role: CompanyUserTypeEnum.OWNER,
+      type: CompanyUserTypeEnum.OWNER,
     });
 
     return newCompany;
