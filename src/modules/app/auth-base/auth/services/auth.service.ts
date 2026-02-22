@@ -167,13 +167,13 @@ export class AuthService {
       input.password,
       user.password,
     );
+
     if (!correctPassword) {
       throw new HttpException(
         'Bad Credentials',
         StatusCodeEnum.BAD_CREDENTIALS,
       );
     }
-
     const session = await this.sessionService.createNewSession(user.id);
     const token = await this.authHelper.generateJwtToken(session.id);
 

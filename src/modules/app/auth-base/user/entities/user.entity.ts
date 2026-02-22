@@ -9,7 +9,7 @@ export class User extends BaseModel {
   @Column()
   email: string;
 
-  @Column({ select: false })
+  @Column()
   password: string;
 
   @Column()
