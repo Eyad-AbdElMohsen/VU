@@ -18,7 +18,7 @@ export class CompanyController {
   async replyJoinRequest(
     @Body('input') input: ReplyJoinRequestInput,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<boolean> {
     return await this.companyService.replyJoinRequest(
       input,
       user.companyUser.companyId,
@@ -32,7 +32,7 @@ export class CompanyController {
   async removeFromCompany(
     @Body('userId') userId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<boolean> {
     return await this.companyService.removeUserFromCompany(
       userId,
       user.companyUser.companyId,
@@ -46,7 +46,7 @@ export class CompanyController {
   async editCompany(
     @Body() input: EditCompanyInput,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<boolean> {
     return await this.companyService.editCompany(
       user.companyUser.companyId,
       input,

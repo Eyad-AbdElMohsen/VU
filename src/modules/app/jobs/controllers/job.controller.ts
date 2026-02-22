@@ -30,7 +30,7 @@ export class JobController {
   async getJob(
     @Param('jobId', ParseUUIDPipe) jobId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<Job> {
     return this.jobService.getJob(jobId, user);
   }
 
@@ -51,7 +51,7 @@ export class JobController {
   async createJob(
     @Body('input') input: CreateJobInput,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<Job> {
     return this.jobService.createJob(input, user);
   }
 
@@ -64,7 +64,7 @@ export class JobController {
     @Body('input') input: UpdateJobInput,
     @Param('jobId', ParseUUIDPipe) jobId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<Job> {
     return this.jobService.updateJob(jobId, input, user);
   }
 
@@ -76,7 +76,7 @@ export class JobController {
   async deleteJob(
     @Param('jobId', ParseUUIDPipe) jobId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<boolean> {
     return this.jobService.deleteJob(jobId, user);
   }
 }

@@ -12,7 +12,7 @@ export class JobMockController {
   getJobMocksCount(
     @Param('jobId', ParseUUIDPipe) jobId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<number> {
     return this.jobMockService.getJobMocksCount(jobId, user);
   }
 
@@ -21,7 +21,7 @@ export class JobMockController {
   getMockJobsCount(
     @Param('mockId', ParseUUIDPipe) mockId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<number> {
     return this.jobMockService.getMockJobsCount(mockId, user);
   }
 }

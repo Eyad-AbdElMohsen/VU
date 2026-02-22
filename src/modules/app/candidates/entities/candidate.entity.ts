@@ -10,8 +10,9 @@ import {
 import { Job } from '../../jobs/entities/job.entity';
 import { CandidateQuestion } from './candidate-question.entity';
 import { CandidateCvAnalysis } from './candidate-cv-analysis.entity';
-import { CandidatePerfomance } from './candidate-perfomance.entity';
+import { CandidatePerformance } from './candidate-performance.entity';
 import { Company } from '../../companies/entities/company.entity';
+import { CandidateStatusEnum } from '../enums/candidate-status.enum';
 
 @Entity()
 export class Candidate extends BaseModel {
@@ -19,15 +20,17 @@ export class Candidate extends BaseModel {
   @JoinColumn({ name: 'jobId' })
   job: Job;
 
-  @ManyToOne(() => Company, (company) => company.candidates, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Company, (company) => company.candidates, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
   @Column({ nullable: true })
   jobId?: string;
 
-  @Column({ nullable: true })
-  companyId?: string;
+  @Column()
+  companyId: string;
 
   @Column()
   name: string;
@@ -38,12 +41,19 @@ export class Candidate extends BaseModel {
   @Column()
   cvUrl: string;
 
+  @Column({
+    type: 'enum',
+    enum: CandidateStatusEnum,
+    default: CandidateStatusEnum.SHORTLISTED,
+  })
+  status: CandidateStatusEnum;
+
   @OneToMany(() => CandidateQuestion, (question) => question.candidate)
   questions: CandidateQuestion[];
 
   @OneToOne(() => CandidateCvAnalysis, (analysis) => analysis.candidate)
   analysis: CandidateCvAnalysis;
 
-  @OneToOne(() => CandidatePerfomance, (performance) => performance.candidate)
-  performance: CandidatePerfomance;
+  @OneToOne(() => CandidatePerformance, (performance) => performance.candidate)
+  performance: CandidatePerformance;
 }

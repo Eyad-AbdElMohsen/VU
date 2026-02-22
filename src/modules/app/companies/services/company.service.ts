@@ -171,6 +171,7 @@ export class CompanyService {
   async editCompany(companyId: string, input: EditCompanyInput) {
     const company = await this.getCompanyById(companyId);
     Object.assign(company, input);
-    return await this.companyRepo.save(company);
+    await this.companyRepo.save(company);
+    return true;
   }
 }

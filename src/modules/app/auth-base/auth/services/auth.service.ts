@@ -20,6 +20,7 @@ import { SessionService } from '../../session/services/session.service';
 import { UserVerificationCodeUseCaseEnum } from '../../user/enums/user-verification-code.enum';
 import { UserTypeEnum } from '../../user/enums/user.enum';
 import { AuthHelperService } from 'src/modules/core/helper/auth-helper.service';
+import { LoginResponse } from '../responses/login.response';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,7 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  async registerCompanyManager(input: RegisterManagerInput) {
+  async registerCompanyManager(input: RegisterManagerInput): Promise<boolean> {
     const { companyInput, userInput } = input;
 
     const newUser = await this.registerUser(
@@ -42,7 +43,7 @@ export class AuthService {
 
     await this.companyService.createNewCompany(companyInput, newUser.id);
 
-    return newUser;
+    return true;
   }
 
   private async registerUser(input: RegisterUserInput, userType: UserTypeEnum) {
@@ -145,7 +146,7 @@ export class AuthService {
     const session = await this.sessionService.createNewSession(user.id);
     const token = await this.authHelper.generateJwtToken(session.id);
 
-    return this.authHelper.appendAuthTokenToUser(user, token);
+    return { token };
   }
 
   async login(input: LoginInput) {
@@ -166,17 +167,17 @@ export class AuthService {
       input.password,
       user.password,
     );
+
     if (!correctPassword) {
       throw new HttpException(
         'Bad Credentials',
         StatusCodeEnum.BAD_CREDENTIALS,
       );
     }
-
     const session = await this.sessionService.createNewSession(user.id);
     const token = await this.authHelper.generateJwtToken(session.id);
 
-    return this.authHelper.appendAuthTokenToUser(user, token);
+    return { token };
   }
 
   async resetPassword(input: ResetPasswordInput) {
