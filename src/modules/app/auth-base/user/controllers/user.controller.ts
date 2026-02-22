@@ -15,6 +15,7 @@ import { UserTypeEnum } from '../enums/user.enum';
 import { AppRequest } from 'src/common/types/request.type';
 import { EditUserInput } from '../inputs/edit-user.input';
 import { ChangePasswordInput } from '../inputs/change-password.input';
+import { UserResponse } from '../../auth/responses/user.response';
 
 @Controller('users')
 export class UserController {
@@ -22,8 +23,8 @@ export class UserController {
 
   @Get('me')
   @Auth()
-  async me(@Req() req: AppRequest): Promise<User> {
-    return req.user!;
+  async me(@Req() req: AppRequest): Promise<UserResponse> {
+    return new UserResponse(req.user!);
   }
 
   @Get(':id')
