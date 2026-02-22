@@ -16,6 +16,7 @@ import { Auth } from 'src/common/decorators/auth.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { SessionEntity } from '../../session/entities/session.entity';
 import { CurrentSessionId } from 'src/common/decorators/session.decorator';
+import { LoginResponse } from '../responses/login.response';
 
 @Controller('auth')
 export class AuthController {
@@ -25,7 +26,7 @@ export class AuthController {
   @Post('register_manager')
   async registerAsCompanyManager(
     @Body('input') input: RegisterManagerInput,
-  ): Promise<User> {
+  ): Promise<boolean> {
     return await this.authService.registerCompanyManager(input);
   }
 
@@ -34,7 +35,7 @@ export class AuthController {
   async newCompanyJoinRequest(
     @Body('input') input: RegisterUserInput,
     @Param('companyId') companyId: string,
-  ) {
+  ): Promise<boolean> {
     return await this.authService.newCompanyJoinRequest(input, companyId);
   }
 
@@ -42,25 +43,29 @@ export class AuthController {
   @Post('code_verify_request')
   async requestVerificationCode(
     @Body('input') input: RequestVerificationCodeInput,
-  ) {
+  ): Promise<boolean> {
     return await this.authService.requestVerificationCode(input);
   }
 
   @Transactional()
   @Post('verify_email')
-  async verifyEmail(@Body('input') input: VerifyEmailVerificationCodeInput) {
+  async verifyEmail(
+    @Body('input') input: VerifyEmailVerificationCodeInput,
+  ): Promise<LoginResponse> {
     return await this.authService.verifyEmailVerificationCode(input);
   }
 
   @Transactional()
   @Post('reset_password')
-  async resetPassword(@Body('input') input: ResetPasswordInput) {
+  async resetPassword(
+    @Body('input') input: ResetPasswordInput,
+  ): Promise<boolean> {
     return await this.authService.resetPassword(input);
   }
 
   @Transactional()
   @Post('login')
-  async login(@Body('input') input: LoginInput) {
+  async login(@Body('input') input: LoginInput): Promise<LoginResponse> {
     return await this.authService.login(input);
   }
 
@@ -70,14 +75,14 @@ export class AuthController {
   async logout(
     @CurrentUser() user: User,
     @CurrentSessionId() sessionId: number,
-  ) {
+  ): Promise<boolean> {
     return await this.authService.logout(user.id, sessionId);
   }
 
   @Transactional()
   @Post('logout_all_devices')
   @Auth()
-  async logoutFromAllDevices(@CurrentUser() user: User) {
+  async logoutFromAllDevices(@CurrentUser() user: User): Promise<boolean> {
     return await this.authService.logoutFromAllDevices(user.id);
   }
 }

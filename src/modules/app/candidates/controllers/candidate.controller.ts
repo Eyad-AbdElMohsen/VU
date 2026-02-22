@@ -27,7 +27,7 @@ export class CandidateController {
   async getCandidate(
     @Param('candidateId', ParseUUIDPipe) candidateId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<Candidate> {
     return this.candidateService.getCandidate(candidateId, user);
   }
 
@@ -49,7 +49,7 @@ export class CandidateController {
     @Body('input') input: UpdateCandidateStatusInput,
     @Param('candidateId', ParseUUIDPipe) candidateId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<boolean> {
     return this.candidateService.updateCandidateStatus(
       candidateId,
       input,

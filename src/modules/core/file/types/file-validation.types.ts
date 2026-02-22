@@ -21,4 +21,13 @@ export const FileModelValidation: FileModelValidationType = {
       'application/pdf',
     ],
   },
+  candidate: {
+    maxSize: 10 * 1024 * 1024,
+    allowMimeTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'application/pdf',
+    ],
+  },
 };

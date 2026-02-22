@@ -33,13 +33,6 @@ export class AuthHelperService {
     return jwt.sign(payload, secret, { expiresIn });
   }
 
-  appendAuthTokenToUser(user: User, token: string) {
-    return {
-      ...user,
-      token,
-    };
-  }
-
   extractTokenFromHeaders(req: Request) {
     const { authorization } = req.headers;
 

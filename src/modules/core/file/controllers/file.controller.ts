@@ -9,6 +9,7 @@ import { FileService } from '../services/file.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileModelNameEnum } from '../enums/file-model.enum';
 import { FileValidationInterceptor } from '../interceptors/file-size-validation.pipe';
+import { FileEntity } from '../entities/file.entity';
 
 @Controller('files')
 export class FileController {
@@ -19,7 +20,7 @@ export class FileController {
   async uploadFile(
     @Body('modelName') modelName: FileModelNameEnum,
     @UploadedFile() file: Express.Multer.File,
-  ) {
+  ): Promise<FileEntity> {
     return this.fileService.uploadFile(file, modelName);
   }
 }

@@ -30,7 +30,7 @@ export class MockController {
   async getMock(
     @Param('mockId', ParseUUIDPipe) mockId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<Mock> {
     return this.mockService.getMock(mockId, user);
   }
 
@@ -51,7 +51,7 @@ export class MockController {
   async createNewMock(
     @Body('input') input: CreateMockInput,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<Mock> {
     return this.mockService.createMock(input, user);
   }
 
@@ -64,7 +64,7 @@ export class MockController {
     @Param('mockId', ParseUUIDPipe) mockId: string,
     @Body('input') input: UpdateMockInput,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<Mock> {
     return this.mockService.updateMock(mockId, input, user);
   }
 
@@ -76,7 +76,7 @@ export class MockController {
   async deleteMock(
     @Param('mockId', ParseUUIDPipe) mockId: string,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<boolean> {
     return this.mockService.deleteMock(mockId, user);
   }
 }

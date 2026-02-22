@@ -22,7 +22,7 @@ export class UserController {
 
   @Get('me')
   @Auth()
-  async me(@Req() req: AppRequest) {
+  async me(@Req() req: AppRequest): Promise<User> {
     return req.user!;
   }
 
@@ -36,7 +36,10 @@ export class UserController {
 
   @Patch('edit')
   @Auth()
-  async editProfile(@Body() input: EditUserInput, @Req() { user }: AppRequest) {
+  async editProfile(
+    @Body() input: EditUserInput,
+    @Req() { user }: AppRequest,
+  ): Promise<User> {
     return this.userService.editUser(user!.id, input);
   }
 
@@ -45,7 +48,7 @@ export class UserController {
   async changePassword(
     @Body() input: ChangePasswordInput,
     @Req() { user }: AppRequest,
-  ) {
+  ): Promise<boolean> {
     return this.userService.changePassword(user!.id, input);
   }
 }
