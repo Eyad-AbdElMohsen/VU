@@ -4,7 +4,9 @@ import { Candidate } from './candidate.entity';
 
 @Entity()
 export class CandidateCvAnalysis extends BaseModel {
-  @OneToOne(() => Candidate, (candidate) => candidate.analysis, { onDelete: 'CASCADE' })
+  @OneToOne(() => Candidate, (candidate) => candidate.analysis, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'candidateId' })
   candidate: Candidate;
 

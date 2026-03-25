@@ -51,31 +51,38 @@ export class MockService {
     const { filter, paginate } = query;
 
     const qb = this.mockRepo
-    .createQueryBuilder('mock')
-    .leftJoinAndSelect('mock.questions', 'question')
-    .leftJoinAndSelect('mock."mockJobs"', 'mockJob')
-    .leftJoinAndSelect('mockJob.job', 'job')
-    .where('mock."companyId" = :companyId', { companyId });
+      .createQueryBuilder('mock')
+      .leftJoinAndSelect('mock.questions', 'question')
+      .leftJoinAndSelect('mock."mockJobs"', 'mockJob')
+      .leftJoinAndSelect('mockJob.job', 'job')
+      .where('mock."companyId" = :companyId', { companyId });
 
     if (filter) {
       if (filter.search) {
         const search = `%${this.appHelper.trimAllSpaces(filter.search)}%`;
         qb.andWhere(
           '(mock.title ILIKE :search OR mock.description ILIKE :search OR mock.topics::text ILIKE :search OR mock.technologies::text ILIKE :search)',
-          { search }
+          { search },
         );
       }
       if (filter.difficulty) {
-        qb.andWhere('mock.difficulty = :difficulty', { difficulty: filter.difficulty });
+        qb.andWhere('mock.difficulty = :difficulty', {
+          difficulty: filter.difficulty,
+        });
       }
       if (filter.type) {
         qb.andWhere('mock.type = :type', { type: filter.type });
       }
       if (filter.enableFollowUpQuestions !== undefined) {
-        qb.andWhere('mock."enableFollowUpQuestions" = :enableFollowUpQuestions', { enableFollowUpQuestions: filter.enableFollowUpQuestions });
+        qb.andWhere(
+          'mock."enableFollowUpQuestions" = :enableFollowUpQuestions',
+          { enableFollowUpQuestions: filter.enableFollowUpQuestions },
+        );
       }
       if (filter.enableRecordReplay !== undefined) {
-        qb.andWhere('mock."enableRecordReplay" = :enableRecordReplay', { enableRecordReplay: filter.enableRecordReplay });
+        qb.andWhere('mock."enableRecordReplay" = :enableRecordReplay', {
+          enableRecordReplay: filter.enableRecordReplay,
+        });
       }
     }
 

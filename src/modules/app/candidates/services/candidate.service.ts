@@ -29,7 +29,11 @@ export class CandidateService {
     private readonly appHelper: AppHelperService,
   ) {}
 
-  async applyForJob(companyId: string, jobId: string, input: ApplyForJobInput): Promise<boolean> {
+  async applyForJob(
+    companyId: string,
+    jobId: string,
+    input: ApplyForJobInput,
+  ): Promise<boolean> {
     const { name, email, cvUrl } = input;
 
     let candidate = this.candidateRepo.create({
@@ -40,7 +44,7 @@ export class CandidateService {
       email,
       cvUrl,
     });
-    
+
     await this.candidateRepo.save(candidate);
 
     return true;

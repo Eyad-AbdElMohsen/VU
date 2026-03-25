@@ -4,7 +4,9 @@ import { Candidate } from './candidate.entity';
 
 @Entity()
 export class CandidateQuestion extends BaseModel {
-  @ManyToOne(() => Candidate, (candidate) => candidate.questions, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Candidate, (candidate) => candidate.questions, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'candidateId' })
   candidate: Candidate;
 
