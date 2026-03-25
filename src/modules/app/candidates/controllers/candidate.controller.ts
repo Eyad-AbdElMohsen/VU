@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { CompanyAuth } from 'src/common/decorators/company-auth.decorator';
@@ -16,6 +17,7 @@ import { PaginatedResponse } from 'src/common/types/paginated-response.type';
 import { PaginatedCandidateQueryInput } from '../inputs/paginated-candidate-query.input';
 import { CompanyUserTypeEnum } from '../../companies/enums/company-user-type.enum';
 import { UpdateCandidateStatusInput } from '../inputs/update-candidate-status.input';
+import { ApplyForJobInput } from '../inputs/apply-for-job.input';
 
 @Controller('candidates')
 export class CandidateController {
@@ -38,6 +40,16 @@ export class CandidateController {
     @Query() query: PaginatedCandidateQueryInput,
   ): Promise<PaginatedResponse<Candidate>> {
     return this.candidateService.getPaginatedCandidates(query, user);
+  }
+
+  // POST
+  @Post('apply/:companyId/:jobId')
+  async applyForJob(
+    @Param('companyId', ParseUUIDPipe) companyId: string,
+    @Param('jobId', ParseUUIDPipe) jobId: string,
+    @Body('input') input: ApplyForJobInput,
+  ): Promise<boolean> {
+    return this.candidateService.applyForJob(companyId, jobId, input);
   }
 
   // PATCH

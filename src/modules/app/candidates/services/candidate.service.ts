@@ -17,6 +17,9 @@ import { AppHelperService } from 'src/modules/core/helper/helper.services';
 import { UpdateCandidateStatusInput } from '../inputs/update-candidate-status.input';
 import { SortDirectionEnum } from 'src/common/enums/sort.enum';
 import { CandidateSortFieldsEnum } from '../enums/candidate-sort-fields.enum';
+import { ApplyForJobInput } from '../inputs/apply-for-job.input';
+import { Job } from '../../jobs/entities/job.entity';
+import { Company } from '../../companies/entities/company.entity';
 
 @Injectable()
 export class CandidateService {
@@ -25,6 +28,23 @@ export class CandidateService {
     private readonly candidateRepo: Repository<Candidate>,
     private readonly appHelper: AppHelperService,
   ) {}
+
+  async applyForJob(companyId: string, jobId: string, input: ApplyForJobInput): Promise<boolean> {
+    const { name, email, cvUrl } = input;
+
+    let candidate = this.candidateRepo.create({
+      // QUES: should I add job and company?
+      jobId,
+      companyId,
+      name,
+      email,
+      cvUrl,
+    });
+    
+    await this.candidateRepo.save(candidate);
+
+    return true;
+  }
 
   async getCandidate(candidateId: string, user: User) {
     const candidate = await this.candidateRepo.findOne({
