@@ -18,7 +18,20 @@ import { PaginatedCandidateQueryInput } from '../inputs/paginated-candidate-quer
 import { CompanyUserTypeEnum } from '../../companies/enums/company-user-type.enum';
 import { UpdateCandidateStatusInput } from '../inputs/update-candidate-status.input';
 import { ApplyForJobInput } from '../inputs/apply-for-job.input';
+import {
+  ApiExtraModels,
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
+@ApiExtraModels(ApplyForJobInput, UpdateCandidateStatusInput)
+@ApiTags('Candidates')
 @Controller('candidates')
 export class CandidateController {
   constructor(private readonly candidateService: CandidateService) {}
@@ -26,6 +39,14 @@ export class CandidateController {
   // GET
   @CompanyAuth()
   @Get('get/:candidateId')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get candidate details by ID' })
+  @ApiParam({
+    name: 'candidateId',
+    format: 'uuid',
+    example: 'deab2f9f-2507-4f26-9f39-069d95dce916',
+  })
+  @ApiOkResponse({ type: Candidate })
   async getCandidate(
     @Param('candidateId', ParseUUIDPipe) candidateId: string,
     @CurrentUser() user: User,
@@ -35,6 +56,54 @@ export class CandidateController {
 
   @Get('get_paginated')
   @CompanyAuth()
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get paginated candidates for the current company' })
+  @ApiQuery({
+    name: 'paginate',
+    required: false,
+    style: 'deepObject',
+    explode: true,
+    schema: {
+      type: 'object',
+      properties: {
+        page: { type: 'number', example: 1 },
+        limit: { type: 'number', example: 10 },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'filter',
+    required: false,
+    style: 'deepObject',
+    explode: true,
+    schema: {
+      type: 'object',
+      properties: {
+        search: { type: 'string', example: 'frontend' },
+        status: { type: 'string', example: 'Shortlisted' },
+        cheat: { type: 'string', example: 'Clean' },
+        jobId: { type: 'string', format: 'uuid' },
+        minScore: { type: 'number', example: 20 },
+        maxScore: { type: 'number', example: 90 },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    style: 'deepObject',
+    explode: true,
+    schema: {
+      type: 'object',
+      properties: {
+        field: { type: 'string', example: 'createdAt' },
+        dir: { type: 'string', example: 'DESC' },
+      },
+    },
+  })
+  @ApiOkResponse({
+    description: 'Paginated candidates response',
+  })
   async getPaginatedCandidates(
     @CurrentUser() user: User,
     @Query() query: PaginatedCandidateQueryInput,
@@ -44,6 +113,34 @@ export class CandidateController {
 
   // POST
   @Post('apply/:companyId/:jobId')
+  @ApiOperation({ summary: 'Apply for a specific company job' })
+  @ApiParam({
+    name: 'companyId',
+    format: 'uuid',
+    example: '9a0f5e03-2732-4b79-a2e3-0cc4491dcbec',
+  })
+  @ApiParam({
+    name: 'jobId',
+    format: 'uuid',
+    example: 'f168e302-f8a4-4cd4-9f7e-f09180f48eec',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['input'],
+      properties: {
+        input: { $ref: getSchemaPath(ApplyForJobInput) },
+      },
+      example: {
+        input: {
+          name: 'Omar Nasser',
+          email: 'omar.nasser@example.com',
+          cvUrl: 'https://cdn.example.com/cv/omar-nasser.pdf',
+        },
+      },
+    },
+  })
+  @ApiOkResponse({ description: 'Application submitted successfully' })
   async applyForJob(
     @Param('companyId', ParseUUIDPipe) companyId: string,
     @Param('jobId', ParseUUIDPipe) jobId: string,
@@ -57,6 +154,28 @@ export class CandidateController {
     types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.EDITOR],
   })
   @Patch('update/:candidateId')
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Update candidate final status' })
+  @ApiParam({
+    name: 'candidateId',
+    format: 'uuid',
+    example: 'deab2f9f-2507-4f26-9f39-069d95dce916',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['input'],
+      properties: {
+        input: { $ref: getSchemaPath(UpdateCandidateStatusInput) },
+      },
+      example: {
+        input: {
+          status: 'Accepted',
+        },
+      },
+    },
+  })
+  @ApiOkResponse({ description: 'Candidate status updated' })
   async updateCandidateStatus(
     @Body('input') input: UpdateCandidateStatusInput,
     @Param('candidateId', ParseUUIDPipe) candidateId: string,

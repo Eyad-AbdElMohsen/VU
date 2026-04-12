@@ -19,7 +19,21 @@ import { User } from '../../auth-base/user/entities/user.entity';
 import { PaginatedMockQueryInput } from '../inputs/paginated-mock-query.input';
 import { PaginatedResponse } from 'src/common/types/paginated-response.type';
 import { Mock } from '../entities/mock.entity';
+import {
+  ApiExtraModels,
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
+@ApiExtraModels(CreateMockInput, UpdateMockInput)
+@ApiTags('Mocks')
+@ApiBearerAuth('access-token')
 @Controller('mock')
 export class MockController {
   constructor(private readonly mockService: MockService) {}
@@ -27,6 +41,13 @@ export class MockController {
   // --------------------------- GET ---------------------------
   @Get('get/:mockId')
   @CompanyAuth()
+  @ApiOperation({ summary: 'Get mock details by ID' })
+  @ApiParam({
+    name: 'mockId',
+    format: 'uuid',
+    example: '50d05366-a485-4b84-a2cc-f7bb0f58472e',
+  })
+  @ApiOkResponse({ type: Mock })
   async getMock(
     @Param('mockId', ParseUUIDPipe) mockId: string,
     @CurrentUser() user: User,
@@ -36,6 +57,37 @@ export class MockController {
 
   @Get('get_paginated')
   @CompanyAuth()
+  @ApiOperation({ summary: 'Get paginated mocks for current company' })
+  @ApiQuery({
+    name: 'paginate',
+    required: false,
+    style: 'deepObject',
+    explode: true,
+    schema: {
+      type: 'object',
+      properties: {
+        page: { type: 'number', example: 1 },
+        limit: { type: 'number', example: 10 },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'filter',
+    required: false,
+    style: 'deepObject',
+    explode: true,
+    schema: {
+      type: 'object',
+      properties: {
+        search: { type: 'string', example: 'node' },
+        difficulty: { type: 'string', example: 'MEDIUM' },
+        type: { type: 'string', example: 'TECHNICAL' },
+        enableFollowUpQuestions: { type: 'boolean', example: true },
+        enableRecordReplay: { type: 'boolean', example: false },
+      },
+    },
+  })
+  @ApiOkResponse({ description: 'Paginated mocks response' })
   async getPaginatedMocks(
     @CurrentUser() user: User,
     @Query() query: PaginatedMockQueryInput,
@@ -48,6 +100,42 @@ export class MockController {
   @CompanyAuth({
     types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.EDITOR],
   })
+  @ApiOperation({ summary: 'Create a new mock interview template' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['input'],
+      properties: {
+        input: { $ref: getSchemaPath(CreateMockInput) },
+      },
+      example: {
+        input: {
+          title: 'Node.js Backend Mock',
+          description: 'Assess Node.js API design, testing, and scalability thinking.',
+          difficulty: 'MEDIUM',
+          type: 'TECHNICAL',
+          estimatedTimeInMinutes: 45,
+          technologies: ['Node.js', 'NestJS', 'PostgreSQL'],
+          topics: ['REST APIs', 'Testing', 'Performance'],
+          jobIds: ['f168e302-f8a4-4cd4-9f7e-f09180f48eec'],
+          enableFollowUpQuestions: true,
+          enableRecordReplay: false,
+          questions: [
+            {
+              title: 'Explain event loop in Node.js',
+              description: 'Describe phases and how asynchronous callbacks are scheduled.',
+              difficulty: 'MEDIUM',
+              estimatedTimeInMinutes: 5,
+              order: 1,
+              answerType: 'FREE_TEXT',
+              correctAnswer: 'The event loop manages async callback execution phases.',
+            },
+          ],
+        },
+      },
+    },
+  })
+  @ApiOkResponse({ type: Mock })
   async createNewMock(
     @Body('input') input: CreateMockInput,
     @CurrentUser() user: User,
@@ -60,6 +148,28 @@ export class MockController {
   @CompanyAuth({
     types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.EDITOR],
   })
+  @ApiOperation({ summary: 'Update a mock interview template' })
+  @ApiParam({
+    name: 'mockId',
+    format: 'uuid',
+    example: '50d05366-a485-4b84-a2cc-f7bb0f58472e',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['input'],
+      properties: {
+        input: { $ref: getSchemaPath(UpdateMockInput) },
+      },
+      example: {
+        input: {
+          title: 'Advanced Node.js Backend Mock',
+          enableRecordReplay: true,
+        },
+      },
+    },
+  })
+  @ApiOkResponse({ type: Mock })
   async updateMock(
     @Param('mockId', ParseUUIDPipe) mockId: string,
     @Body('input') input: UpdateMockInput,
@@ -73,6 +183,13 @@ export class MockController {
   @CompanyAuth({
     types: [CompanyUserTypeEnum.OWNER, CompanyUserTypeEnum.EDITOR],
   })
+  @ApiOperation({ summary: 'Delete a mock interview template' })
+  @ApiParam({
+    name: 'mockId',
+    format: 'uuid',
+    example: '50d05366-a485-4b84-a2cc-f7bb0f58472e',
+  })
+  @ApiOkResponse({ description: 'Mock deleted successfully' })
   async deleteMock(
     @Param('mockId', ParseUUIDPipe) mockId: string,
     @CurrentUser() user: User,
