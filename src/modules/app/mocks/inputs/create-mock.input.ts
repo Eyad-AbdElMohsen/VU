@@ -145,7 +145,11 @@ export class MockQuestionInput {
   @IsPositive()
   estimatedTimeInMinutes: number;
 
-  @ApiProperty({ example: 1, minimum: 1, description: 'Question order in mock' })
+  @ApiProperty({
+    example: 1,
+    minimum: 1,
+    description: 'Question order in mock',
+  })
   @IsInt()
   @IsPositive()
   order: number;

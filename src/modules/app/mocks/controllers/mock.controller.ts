@@ -111,7 +111,8 @@ export class MockController {
       example: {
         input: {
           title: 'Node.js Backend Mock',
-          description: 'Assess Node.js API design, testing, and scalability thinking.',
+          description:
+            'Assess Node.js API design, testing, and scalability thinking.',
           difficulty: 'MEDIUM',
           type: 'TECHNICAL',
           estimatedTimeInMinutes: 45,
@@ -123,12 +124,14 @@ export class MockController {
           questions: [
             {
               title: 'Explain event loop in Node.js',
-              description: 'Describe phases and how asynchronous callbacks are scheduled.',
+              description:
+                'Describe phases and how asynchronous callbacks are scheduled.',
               difficulty: 'MEDIUM',
               estimatedTimeInMinutes: 5,
               order: 1,
               answerType: 'FREE_TEXT',
-              correctAnswer: 'The event loop manages async callback execution phases.',
+              correctAnswer:
+                'The event loop manages async callback execution phases.',
             },
           ],
         },

@@ -28,7 +28,8 @@ export class RegisterUserInput {
     example: 'StrongPass1',
     minLength: 8,
     maxLength: 20,
-    description: 'Password with at least one uppercase and one lowercase letter',
+    description:
+      'Password with at least one uppercase and one lowercase letter',
   })
   @IsString()
   @IsNotEmpty()
