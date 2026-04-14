@@ -53,7 +53,7 @@ export class MockService {
     const qb = this.mockRepo
       .createQueryBuilder('mock')
       .leftJoinAndSelect('mock.questions', 'question')
-      .leftJoinAndSelect('mock."mockJobs"', 'mockJob')
+      .leftJoinAndSelect('mock.mockJobs', 'mockJob')
       .leftJoinAndSelect('mockJob.job', 'job')
       .where('mock."companyId" = :companyId', { companyId });
 
@@ -90,11 +90,16 @@ export class MockService {
       limit = paginate?.limit || 10;
 
     const [items, total] = await qb
-      .orderBy('mock."createdAt"', 'DESC')
-      .addOrderBy('question.order', 'ASC')
+      .orderBy('mock.createdAt', 'DESC')
       .take(limit)
       .skip((page - 1) * limit)
       .getManyAndCount();
+
+    for (const item of items) {
+      if (item.questions?.length) {
+        item.questions.sort((a, b) => a.order - b.order);
+      }
+    }
 
     return {
       items,
@@ -106,6 +111,10 @@ export class MockService {
 
   async createMock(input: CreateMockInput, user: User) {
     const { questions, ...mockInput } = input;
+
+    if (mockInput.jobIds.length) {
+      await this.validateJobsExist(mockInput.jobIds);
+    }
 
     let mock = this.mockRepo.create({
       ...mockInput,
@@ -211,7 +220,7 @@ export class MockService {
     return mock;
   }
 
-  private async addJobsToMock(mock: Mock, jobIds: string[]) {
+  private async validateJobsExist(jobIds: string[]) {
     const jobCount = await this.jobRepo.count({
       where: { id: In(jobIds) },
       select: { id: true },
@@ -219,6 +228,10 @@ export class MockService {
 
     if (jobCount !== jobIds.length)
       throw new HttpException('Job Not Found', StatusCodeEnum.JOB_NOT_FOUND);
+  }
+
+  private async addJobsToMock(mock: Mock, jobIds: string[]) {
+    await this.validateJobsExist(jobIds);
 
     const mockJobsData = jobIds.map((jobId) => ({
       jobId,

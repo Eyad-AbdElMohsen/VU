@@ -1,5 +1,6 @@
 import { IsOptional, IsPositive, ValidateNested } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 export class PaginatorInput {
   @ApiPropertyOptional({
     example: 1,
@@ -7,6 +8,7 @@ export class PaginatorInput {
     description: 'Current page number (1-based)',
   })
   @IsOptional()
+  @Type(() => Number)
   @IsPositive()
   page?: number = 1;
 
@@ -16,6 +18,7 @@ export class PaginatorInput {
     description: 'Maximum number of items to return',
   })
   @IsOptional()
+  @Type(() => Number)
   @IsPositive()
   limit?: number = 10;
 }
@@ -27,5 +30,6 @@ export class PaginateInput {
   })
   @IsOptional()
   @ValidateNested()
+  @Type(() => PaginatorInput)
   paginate?: PaginatorInput;
 }

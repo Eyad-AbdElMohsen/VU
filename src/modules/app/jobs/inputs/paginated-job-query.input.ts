@@ -5,6 +5,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { JobStatusEnum } from '../enums/job-status.enum';
 import { JobTypeEnum } from '../enums/job-type.enum';
 import { PaginateInput } from 'src/common/inputs/paginate.input';
@@ -40,6 +41,7 @@ export class JobFilterInput {
 export class PaginatedJobQueryInput extends PaginateInput {
   @ApiPropertyOptional({ type: () => JobFilterInput })
   @ValidateNested()
+  @Type(() => JobFilterInput)
   @IsOptional()
   filter?: JobFilterInput;
 }

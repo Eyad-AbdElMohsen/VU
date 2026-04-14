@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from '../entities/job.entity';
-import { FindOptionsWhere, ILike, In, Repository } from 'typeorm';
+import { Brackets, In, Repository } from 'typeorm';
 import { CreateJobInput } from '../inputs/create-job.input';
 import { User } from '../../auth-base/user/entities/user.entity';
 import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
@@ -44,33 +44,43 @@ export class JobService {
     const companyId = user.companyUser.companyId;
     const { filter, paginate } = query;
 
-    const where: FindOptionsWhere<Job>[] = [{ companyId }];
+    const qb = this.jobRepo
+      .createQueryBuilder('job')
+      .leftJoinAndSelect('job.jobMocks', 'jobMock')
+      .leftJoinAndSelect('jobMock.mock', 'mock')
+      .where('job."companyId" = :companyId', { companyId });
 
     if (filter) {
       if (filter.search) {
         const search = `%${this.appHelper.trimAllSpaces(filter.search)}%`;
-        where.push({
-          title: ILike(search),
-          description: ILike(search), // TODO: Query builder for departments[] field
-          requirements: ILike(search),
-        });
+        qb.andWhere(
+          new Brackets((where) => {
+            where
+              .where('job.title ILIKE :search', { search })
+              .orWhere('job.description ILIKE :search', { search })
+              .orWhere('job.requirements ILIKE :search', { search })
+              .orWhere('job.departments::text ILIKE :search', { search });
+          }),
+        );
       }
 
-      if (filter.status) where.push({ status: filter.status });
+      if (filter.status) {
+        qb.andWhere('job.status = :status', { status: filter.status });
+      }
 
-      if (filter.type) where.push({ type: filter.type });
+      if (filter.type) {
+        qb.andWhere('job.type = :type', { type: filter.type });
+      }
     }
 
     const page = paginate?.page || 1,
       limit = paginate?.limit || 10;
 
-    const [items, total] = await this.jobRepo.findAndCount({
-      where,
-      take: limit,
-      skip: (page - 1) * limit,
-      relations: { jobMocks: { mock: true } },
-      order: { createdAt: 'DESC' },
-    });
+    const [items, total] = await qb
+      .orderBy('job.createdAt', 'DESC')
+      .take(limit)
+      .skip((page - 1) * limit)
+      .getManyAndCount();
 
     return {
       items,
@@ -84,6 +94,10 @@ export class JobService {
     const { mockIds, startDate, endDate, ...rest } = input;
 
     this.validateDateRange(startDate, endDate);
+
+    if (mockIds.length) {
+      await this.validateMocksExist(mockIds);
+    }
 
     const status: JobStatusEnum =
       +startDate < new Date().getTime()
@@ -170,13 +184,17 @@ export class JobService {
   }
 
   // ------------------------------- PRIVATE METHODS --------------------------------------- //
-  private async addMocksToJob(job: Job, mockIds: string[]) {
+  private async validateMocksExist(mockIds: string[]) {
     const mockCount = await this.mockRepo.count({
       where: { id: In(mockIds) },
     });
 
     if (mockCount !== mockIds.length)
       throw new HttpException('Mock Not Found', StatusCodeEnum.MOCK_NOT_FOUND);
+  }
+
+  private async addMocksToJob(job: Job, mockIds: string[]) {
+    await this.validateMocksExist(mockIds);
 
     const jobMockData = mockIds.map((mockId) => ({
       jobId: job.id,

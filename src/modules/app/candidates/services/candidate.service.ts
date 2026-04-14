@@ -1,14 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Candidate } from '../entities/candidate.entity';
-import {
-  FindOptionsOrder,
-  FindOptionsWhere,
-  ILike,
-  LessThanOrEqual,
-  MoreThanOrEqual,
-  Repository,
-} from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../../auth-base/user/entities/user.entity';
 import { StatusCodeEnum } from 'src/common/enums/status-code.enum';
 import { PaginatedCandidateQueryInput } from '../inputs/paginated-candidate-query.input';
@@ -72,64 +65,63 @@ export class CandidateService {
   ): Promise<PaginatedResponse<Candidate>> {
     const companyId = user.companyUser.companyId;
     const { filter, paginate, sort } = query;
+    const page = paginate?.page || 1,
+      limit = paginate?.limit || 10;
 
-    const where: FindOptionsWhere<Candidate>[] = [{ companyId }];
+    const qb = this.candidateRepo
+      .createQueryBuilder('candidate')
+      .leftJoinAndSelect('candidate.performance', 'performance')
+      .leftJoinAndSelect('candidate.analysis', 'analysis')
+      .where('candidate.companyId = :companyId', { companyId });
 
     if (filter) {
       if (filter.search) {
         const search = `%${this.appHelper.trimAllSpaces(filter.search)}%`;
-        where.push({
-          name: ILike(search),
-        });
+        qb.andWhere(
+          '(candidate.name ILIKE :search OR candidate.email ILIKE :search)',
+          { search },
+        );
       }
 
-      if (filter.jobId) where.push({ jobId: filter.jobId });
+      if (filter.jobId)
+        qb.andWhere('candidate.jobId = :jobId', { jobId: filter.jobId });
 
-      if (filter.status) where.push({ status: filter.status });
+      if (filter.status)
+        qb.andWhere('candidate.status = :status', { status: filter.status });
 
-      if (filter.cheat) where.push({ performance: { cheat: filter.cheat } });
+      if (filter.cheat)
+        qb.andWhere('performance.cheat = :cheat', { cheat: filter.cheat });
 
       if (filter.minScore !== undefined)
-        where.push({
-          performance: { score: MoreThanOrEqual(Math.ceil(filter.minScore)) },
+        qb.andWhere('performance.score >= :minScore', {
+          minScore: Math.ceil(filter.minScore),
         });
 
       if (filter.maxScore !== undefined)
-        where.push({
-          performance: { score: LessThanOrEqual(Math.floor(filter.maxScore)) },
+        qb.andWhere('performance.score <= :maxScore', {
+          maxScore: Math.floor(filter.maxScore),
         });
     }
 
-    const page = paginate?.page || 1,
-      limit = paginate?.limit || 10;
+    const sortDirection = sort?.dir || SortDirectionEnum.DESC;
 
-    const order: FindOptionsOrder<Candidate> = {};
-    if (sort) {
-      switch (sort.field) {
-        case CandidateSortFieldsEnum.NAME:
-          order.name = sort.dir || SortDirectionEnum.ASC;
-          break;
-        case CandidateSortFieldsEnum.SCORE:
-          order.performance = { score: sort.dir || SortDirectionEnum.DESC };
-          break;
-        case CandidateSortFieldsEnum.CREATED_AT:
-          order.createdAt = sort.dir || SortDirectionEnum.DESC;
-          break;
-        default:
-          order.createdAt = SortDirectionEnum.DESC;
-          break;
-      }
-    } else {
-      order.createdAt = SortDirectionEnum.DESC;
+    switch (sort?.field) {
+      case CandidateSortFieldsEnum.NAME:
+        qb.orderBy('candidate.name', sortDirection);
+        break;
+      case CandidateSortFieldsEnum.SCORE:
+        qb.orderBy('performance.score', sortDirection);
+        break;
+      case CandidateSortFieldsEnum.CREATED_AT:
+      default:
+        qb.orderBy('candidate.createdAt', sortDirection);
+        break;
     }
 
-    const [items, total] = await this.candidateRepo.findAndCount({
-      where,
-      take: limit,
-      skip: (page - 1) * limit,
-      relations: { performance: true, analysis: true },
-      order,
-    });
+    const [items, total] = await qb
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
 
     return {
       items,

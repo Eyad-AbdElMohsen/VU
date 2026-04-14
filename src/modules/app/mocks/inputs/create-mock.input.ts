@@ -12,6 +12,7 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { DifficultyEnum } from '../enums/difficulty.enum';
 import { MockTypeEnum } from '../enums/mock-type.enum';
 import { AnswerTypeEnum } from '../enums/question-answer-type.enum';
@@ -108,7 +109,8 @@ export class CreateMockInput {
     type: () => [MockQuestionInput],
     description: 'Mock interview question set',
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => MockQuestionInput)
   @ArrayMaxSize(10)
   questions: MockQuestionInput[];
 }

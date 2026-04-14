@@ -6,6 +6,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { PaginateInput } from 'src/common/inputs/paginate.input';
 import { DifficultyEnum } from '../enums/difficulty.enum';
 import { MockTypeEnum } from '../enums/mock-type.enum';
@@ -38,11 +39,23 @@ export class MockFilterInput {
   type?: MockTypeEnum;
 
   @ApiPropertyOptional({ example: true })
+  @Transform(({ value }) => {
+    if (typeof value === 'boolean') return value;
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
   @IsBoolean()
   @IsOptional()
   enableFollowUpQuestions?: boolean;
 
   @ApiPropertyOptional({ example: false })
+  @Transform(({ value }) => {
+    if (typeof value === 'boolean') return value;
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
   @IsBoolean()
   @IsOptional()
   enableRecordReplay?: boolean;
@@ -51,6 +64,7 @@ export class MockFilterInput {
 export class PaginatedMockQueryInput extends PaginateInput {
   @ApiPropertyOptional({ type: () => MockFilterInput })
   @ValidateNested()
+  @Type(() => MockFilterInput)
   @IsOptional()
   filter?: MockFilterInput;
 }
